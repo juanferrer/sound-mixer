@@ -1,0 +1,119 @@
+﻿<Window x:Class="SoundMixer.Views.RootView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:s="https://github.com/canton7/Stylet"
+        xmlns:local="clr-namespace:SoundMixer.Views"
+        xmlns:vm="clr-namespace:SoundMixer.ViewModels"
+        xmlns:r="clr-namespace:SoundMixer"
+        xmlns:custom="clr-namespace:SoundMixer.UserControls"
+        xmlns:converters="clr-namespace:SoundMixer.Converters"
+        mc:Ignorable="d"
+        Title="Sound Mixer" Height="720" Width="1024"
+        MouseDown="Window_MouseDown"
+        DataContext="RootViewModel">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:ObjectToBoolConverter x:Key="ObjectToBoolConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Name="menu" Background="White" VerticalAlignment="Top">
+            <MenuItem Header="_File" VerticalAlignment="Stretch">
+                <MenuItem Header="_New" InputGestureText="Ctrl+N" Click="{s:Action New_Click}"/>
+                <MenuItem Header="_Open" InputGestureText="Ctrl+O" Click="{s:Action Open_Click}"/>
+                <MenuItem Header="_Save" InputGestureText="Ctrl+S" Click="{s:Action Save_Click}"/>
+                <MenuItem Header="Save _As" InputGestureText="Ctrl+Shift+S" Click="{s:Action SaveAs_Click}"/>
+                <Separator/>
+                <MenuItem Header="_Exit"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Add _Scene" Click="{s:Action AddScene_Click}"/>
+                <MenuItem Header="Add _Mood" Click="{s:Action AddMood_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
+                <MenuItem Header="Add Soun_d" Click="{s:Action AddSound_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Name="mainGrid" Background="#FF000000" Focusable="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="25px"/>
+            </Grid.RowDefinitions>
+            <ItemsControl x:Name="scenesStack" ItemsSource="{Binding Workspace.Scenes}" Grid.Column="0" VerticalAlignment="Stretch">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Name="scenesPanel" Background="White"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource SceneButton}" PreviewMouseLeftButtonUp="{s:Action SelectScene_LeftMouseUp}">
+                            <custom:EditableTextBlock Style="{StaticResource SceneEditableTextBlock}" Text="{Binding Name, Mode=TwoWay}"/>
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Rename" Click="{s:Action RenameSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                    <MenuItem Header="Clone" Click="{s:Action CloneSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                    <MenuItem Header="Delete" Click="{s:Action RemoveSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button x:Name="addSceneButton" Content="Add scene" Click="{s:Action AddScene_Click}" Grid.Column="0" Grid.Row="1"/>
+            <ItemsControl x:Name="moodsStack" ItemsSource="{Binding SelectedScene.Moods}" Grid.Column="1">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Name="moodsPanel" Background="White" Margin="1,0,1,0"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource MoodButton}" PreviewMouseLeftButtonUp="{s:Action SelectMood_LeftMouseUp}">
+                            <custom:EditableTextBlock Style="{StaticResource MoodEditableTextBlock}" Text="{Binding Name, Mode=TwoWay}"/>
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Rename" Click="{s:Action RenameMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                    <MenuItem Header="Clone" Click="{s:Action CloneMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                    <MenuItem Header="Delete" Click="{s:Action RemoveMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button x:Name="addMoodButton" Content="Add mood" Click="{s:Action AddMood_Click}" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBoolConverter}}"/>
+            <ItemsControl x:Name="soundsStack" Grid.Column="2" ItemsSource="{Binding SelectedMood.SoundProperties}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Name="soundsPanel" Background="White"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <custom:SoundControl Text="{Binding Sound.Name, Mode=TwoWay}" FilePath="{Binding Sound.FilePath, Mode=TwoWay}"  Volume="{Binding Volume, Mode=TwoWay}">
+                            <custom:SoundControl.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Rename" Click="{s:Action RenameSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                    <MenuItem Header="Clone" Click="{s:Action CloneSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                    <MenuItem Header="Delete" Click="{s:Action RemoveSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                </ContextMenu>
+                            </custom:SoundControl.ContextMenu>
+                        </custom:SoundControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button x:Name="addSoundButton" Content="Add sound" Click="{s:Action AddSound_Click}" Grid.Column="2" Grid.Row="1" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
+        </Grid>
+    </DockPanel>
+</Window>

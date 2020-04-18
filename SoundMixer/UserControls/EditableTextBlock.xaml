@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="SoundMixer.UserControls.EditableTextBlock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SoundMixer.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="500" Focusable="True">
+    <Grid>
+        <TextBlock Name="textBlock" Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Center" Focusable="True"/>
+        <TextBox Name="textBox" Visibility="Hidden" Text="{Binding Text, ElementName=textBlock, Mode=TwoWay}" LostFocus="TextBox_LostFocus" KeyUp="TextBox_KeyUp"/>
+
+    </Grid>
+</UserControl>
