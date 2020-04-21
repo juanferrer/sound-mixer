@@ -49,10 +49,10 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="25px"/>
             </Grid.RowDefinitions>
-            <ItemsControl x:Name="scenesStack" ItemsSource="{Binding Workspace.Scenes}" Grid.Column="0" VerticalAlignment="Stretch">
+            <ItemsControl x:Name="sceneStack" ItemsSource="{Binding Workspace.Scenes}" Grid.Column="0" VerticalAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Name="scenesPanel" Background="White"/>
+                        <StackPanel Name="scenePanel" Background="White"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -71,10 +71,10 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Button x:Name="addSceneButton" Content="Add scene" Click="{s:Action AddScene_Click}" Grid.Column="0" Grid.Row="1"/>
-            <ItemsControl x:Name="moodsStack" ItemsSource="{Binding SelectedScene.Moods}" Grid.Column="1">
+            <ItemsControl x:Name="moodStack" ItemsSource="{Binding SelectedScene.Moods}" Grid.Column="1">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Name="moodsPanel" Background="White" Margin="1,0,1,0"/>
+                        <StackPanel Name="moodPanel" Background="White" Margin="1,0,1,0"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -93,7 +93,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <Button x:Name="addMoodButton" Content="Add mood" Click="{s:Action AddMood_Click}" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBoolConverter}}"/>
-            <ItemsControl x:Name="soundsStack" Grid.Column="2" ItemsSource="{Binding SelectedMood.SoundProperties}">
+            <ItemsControl x:Name="soundStack" Grid.Column="2" ItemsSource="{Binding SelectedMood.SoundProperties}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Name="soundsPanel" Background="White"/>
