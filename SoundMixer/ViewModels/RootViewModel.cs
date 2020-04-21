@@ -44,28 +44,6 @@ namespace SoundMixer.ViewModels
         public RootViewModel()
         {
             Workspace = new WorkspaceModel();
-
-            // Debug data
-            // Create scenes
-            Workspace.Scenes.Add(new SceneModel("Scene 1"));
-            Workspace.Scenes.Add(new SceneModel("Scene 2"));
-
-            // Create moods
-            SelectScene("Scene 1");
-            AddMood("Mood 1");
-            AddMood("Mood 2");
-            SelectScene("Scene 2");
-            AddMood("Mood 3");
-
-            // Create sounds
-            SelectScene("Scene 1");
-            AddSound(@".\1.wav");
-            AddSound(@".\1.wav");
-            SelectScene("Scene 2");
-            AddSound(@".\1.wav");
-
-            SelectScene("Scene 1");
-            SelectMood("Mood 1");
         }
 
         /// <summary>
