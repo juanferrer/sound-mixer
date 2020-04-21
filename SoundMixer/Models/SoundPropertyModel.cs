@@ -43,11 +43,10 @@ namespace SoundMixer.Models
             private set { this.SetAndNotify(ref this.guid, value); }
         }
 
-        public SoundPropertyModel(double volume, SoundModel sound)
+        public SoundPropertyModel(double volume, Guid guid)
         {
             Volume = volume;
-            Sound = sound;
-            GUID = sound.GUID;
+            GUID = guid;
         }
     }
 }

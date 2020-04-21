@@ -67,6 +67,11 @@ namespace SoundMixer.UserControls
             playButtonImage.Source = new BitmapImage(new Uri(Path.Combine(resourcesPath, isPlaying ? stopIcon : playIcon)));
         }
 
+        private void UpdatePlayer()
+        {
+            player.Volume = volumeSlider.Value;
+        }
+
         public void EnterEditMode()
         {
             editableTextBlock.EnterEditMode();
@@ -74,6 +79,7 @@ namespace SoundMixer.UserControls
 
         public void Play()
         {
+            UpdatePlayer();
             player.Play();
             isPlaying = true;
             isLooping = true;
@@ -82,6 +88,7 @@ namespace SoundMixer.UserControls
 
         public void Stop()
         {
+            UpdatePlayer();
             player.Stop();
             isPlaying = false;
             isLooping = false;
@@ -92,9 +99,7 @@ namespace SoundMixer.UserControls
         {
             if (isPlaying)
             {
-                isLooping = false;
-                player.Stop();
-                isPlaying = false;
+                Stop();
             }
             else
             {
@@ -106,11 +111,8 @@ namespace SoundMixer.UserControls
                     return;
                 }
 
-                isLooping = true;
-                player.Play();
-                isPlaying = true;
+                Play();
             }
-            UpdatePlayButtonIcon();
         }
 
         private void SoundMediaElement_MediaEnded(object sender, RoutedEventArgs e)

@@ -41,7 +41,7 @@ namespace SoundMixer.Models
         {
             Name = name;
             FilePath = filePath;
-            GUID = new Guid();
+            GUID = Guid.NewGuid();
         }
     }
 }

@@ -10,6 +10,7 @@ using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
 using Stylet;
+using System.Linq;
 
 namespace SoundMixer.ViewModels
 {
@@ -112,8 +113,9 @@ namespace SoundMixer.ViewModels
             // Then add all the sounds from the scene
             foreach (var sound in SelectedScene.Sounds)
             {
-                newMood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, sound));
-            }
+                newMood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, sound.GUID));
+                newMood.SoundProperties.LastOrDefault().Sound = sound;
+;            }
         }
 
         /// <summary>
@@ -153,7 +155,10 @@ namespace SoundMixer.ViewModels
             // Then add to every mood
             foreach (var mood in SelectedScene.Moods)
             {
-                mood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, newSound));
+                mood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, newSound.GUID));
+
+                SoundModel sound = FindSoundFromGuid(newSound.GUID);
+                mood.SoundProperties.LastOrDefault().Sound = sound;
             }
         }
 
@@ -205,6 +210,14 @@ namespace SoundMixer.ViewModels
                 if (SelectedScene.Moods[i].Name == name)
                 {
                     SelectedMood = SelectedScene.Moods[i];
+
+                    // It is possible that the UI has not updated yet when we go to
+                    // call PlayAllSounds, so force an update
+                    if (View != null)
+                    {
+                        View.UpdateLayout();
+                    }
+
                     PlayAllSounds();
                 }
             }
@@ -221,6 +234,40 @@ namespace SoundMixer.ViewModels
         {
             string json = File.ReadAllText(path);
             Workspace = JsonConvert.DeserializeObject<WorkspaceModel>(json);
+
+            // Make sure all SounPropertyModels have the correct sound according
+            // to the GUID
+            foreach (var scene in Workspace.Scenes)
+            {
+                for (int i = 0; i < scene.Moods[0].SoundProperties.Count; ++i)
+                {
+                    SoundModel sound = FindSoundFromGuid(scene.Moods[0].SoundProperties[i].GUID);
+
+                    // Since all moods contain the same sounds, we only need to find the matching sound once
+                    foreach (var mood in scene.Moods)
+                    {
+                        mood.SoundProperties[i].Sound = sound;
+                    }
+                }
+            }
+        }
+
+        public SoundModel FindSoundFromGuid(Guid guid)
+        {
+            foreach (var scene in Workspace.Scenes)
+            {
+                //foreach (var sound in scene.Sounds)
+                //{
+                //    if (sound.GUID == guid)
+                //    {
+                //        return sound;
+                //    }
+                //}
+                return scene.Sounds.Where(x => x.GUID == guid).FirstOrDefault();
+            }
+
+            // None matches
+            return null;
         }
 
         public void PlayAllSounds()
@@ -260,7 +307,9 @@ namespace SoundMixer.ViewModels
                 // Want to save?
                 // TODO
             }
-            throw new NotImplementedException();
+            Workspace = new WorkspaceModel();
+            SelectedScene = null;
+            SelectedMood = null;
         }
 
         public void Open_Click(object sender, RoutedEventArgs e)
@@ -288,6 +337,7 @@ namespace SoundMixer.ViewModels
             if (string.IsNullOrEmpty(activeFilePath))
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
                 if ((bool)saveFileDialog.ShowDialog())
                 {
                     activeFilePath = saveFileDialog.FileName;
@@ -305,6 +355,7 @@ namespace SoundMixer.ViewModels
         public void SaveAs_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
             if ((bool)saveFileDialog.ShowDialog())
             {
                 SaveWorkspace(saveFileDialog.FileName);
