@@ -62,12 +62,33 @@ namespace SoundMixer.ViewModels
         }
 
         /// <summary>
+        /// Generate a name based on a string that is not present on a specified list of strings
+        /// </summary>
+        /// <param name="baseName"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public string GetUniqueNameFromString(string baseName, IList<string> list)
+        {
+            // Generate unique name for scene
+            string potentialName = baseName;
+            int i = 1;
+
+            while (list.Contains(potentialName))
+            {
+                potentialName = baseName + " " + i;
+                ++i;
+            }
+
+            return potentialName;
+        }
+
+        /// <summary>
         /// Add a new scene
         /// </summary>
         /// <param name="sceneName"></param>
         public void AddScene(string sceneName)
         {
-            Workspace.Scenes.Add(new SceneModel(sceneName));
+            Workspace.Scenes.Add(new SceneModel(GetUniqueNameFromString(sceneName, Workspace.Scenes.Select(o => o.Name).ToList())));
         }
 
         /// <summary>
@@ -100,7 +121,7 @@ namespace SoundMixer.ViewModels
         /// <param name="sceneName"></param>
         public void AddMood(string moodName)
         {
-            MoodModel newMood = new MoodModel(moodName);
+            MoodModel newMood = new MoodModel(GetUniqueNameFromString(moodName, SelectedScene.Moods.Select(o => o.Name).ToList()));
             SelectedScene.Moods.Add(newMood);
 
             // Then add all the sounds from the scene
@@ -108,7 +129,6 @@ namespace SoundMixer.ViewModels
             {
                 newMood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, sound.GUID));
                 newMood.SoundProperties.LastOrDefault().Sound = sound;
-                ;
             }
         }
 
@@ -143,7 +163,7 @@ namespace SoundMixer.ViewModels
         {
             string tempName = Path.GetFileNameWithoutExtension(soundPath);
 
-            SoundModel newSound = new SoundModel(tempName, soundPath);
+            SoundModel newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath);
             SelectedScene.Sounds.Add(newSound);
 
             // Then add to every mood
@@ -210,14 +230,21 @@ namespace SoundMixer.ViewModels
         {
             StopAllSounds();
 
-            var sceneStack = (View as Views.RootView).sceneStack;
-            List<Button> sceneButtons = sceneStack.GetChildrenOfType<Button>();
-
             for (int i = 0; i < Workspace.Scenes.Count; ++i)
             {
                 if (Workspace.Scenes[i].Name == name)
                 {
                     SelectedScene = Workspace.Scenes[i];
+
+                    // It is possible that the UI has not updated yet when we go to
+                    // call PlayAllSounds, so force an update
+                    if (View != null)
+                    {
+                        View.UpdateLayout();
+                    }
+
+                    var sceneStack = (View as Views.RootView).sceneStack;
+                    List<Button> sceneButtons = sceneStack.GetChildrenOfType<Button>();
 
                     // Apply the default style to every scene button and the selected style to the newly selected one
                     foreach (var sceneButton in sceneButtons)
@@ -243,10 +270,17 @@ namespace SoundMixer.ViewModels
         {
             StopAllSounds();
 
+            SelectedScene = Workspace.Scenes.Count > index ? Workspace.Scenes[index] : null;
+
+            // It is possible that the UI has not updated yet when we go to
+            // call PlayAllSounds, so force an update
+            if (View != null)
+            {
+                View.UpdateLayout();
+            }
+
             var sceneStack = (View as Views.RootView).sceneStack;
             List<Button> sceneButtons = sceneStack.GetChildrenOfType<Button>();
-
-            SelectedScene = Workspace.Scenes.Count > index ? Workspace.Scenes[index] : null;
 
             // Apply the default style to every scene button and the selected style to the newly selected one
             foreach (var sceneButton in sceneButtons)
@@ -268,9 +302,6 @@ namespace SoundMixer.ViewModels
         {
             StopAllSounds();
 
-            var moodStack = (View as Views.RootView).moodStack;
-            List<Button> moodButtons = moodStack.GetChildrenOfType<Button>();
-
             for (int i = 0; i < SelectedScene.Moods.Count; ++i)
             {
                 if (SelectedScene.Moods[i].Name == name)
@@ -283,6 +314,9 @@ namespace SoundMixer.ViewModels
                     {
                         View.UpdateLayout();
                     }
+
+                    var moodStack = (View as Views.RootView).moodStack;
+                    List<Button> moodButtons = moodStack.GetChildrenOfType<Button>();
 
                     // Apply the default style to every scene button and the selected style to the newly selected one
                     foreach (var moodButton in moodButtons)
@@ -307,9 +341,6 @@ namespace SoundMixer.ViewModels
         {
             StopAllSounds();
 
-            var moodStack = (View as Views.RootView).moodStack;
-            List<Button> moodButtons = moodStack.GetChildrenOfType<Button>();
-
             SelectedMood = SelectedScene.Moods.Count > index ? SelectedScene.Moods[index] : null;
 
             // It is possible that the UI has not updated yet when we go to
@@ -318,6 +349,9 @@ namespace SoundMixer.ViewModels
             {
                 View.UpdateLayout();
             }
+
+            var moodStack = (View as Views.RootView).moodStack;
+            List<Button> moodButtons = moodStack.GetChildrenOfType<Button>();
 
             // Apply the default style to every scene button and the selected style to the newly selected one
             foreach (var moodButton in moodButtons)
@@ -370,7 +404,7 @@ namespace SoundMixer.ViewModels
         {
             foreach (var scene in Workspace.Scenes)
             {
-                SoundModel potentialResult = scene.Sounds.Where(x => x.GUID == guid).FirstOrDefault();
+                SoundModel potentialResult = scene.Sounds.Where(o => o.GUID == guid).FirstOrDefault();
 
                 if (potentialResult != null) return potentialResult;
             }
@@ -479,7 +513,7 @@ namespace SoundMixer.ViewModels
             // Select scene if none selected
             if (SelectedScene == null)
             {
-                SelectedScene = Workspace.Scenes[0];
+                SelectScene(Workspace.Scenes[0].Name);
             }
         }
 
@@ -490,7 +524,7 @@ namespace SoundMixer.ViewModels
             // Select mood if none selected
             if (SelectedMood == null)
             {
-                SelectedMood = SelectedScene.Moods[0];
+                SelectMood(SelectedScene.Moods[0].Name);
             }
         }
 
