@@ -8,19 +8,10 @@
         xmlns:vm="clr-namespace:SoundMixer.ViewModels"
         xmlns:r="clr-namespace:SoundMixer"
         xmlns:custom="clr-namespace:SoundMixer.UserControls"
-        xmlns:converters="clr-namespace:SoundMixer.Converters"
         mc:Ignorable="d"
         Title="Sound Mixer" Height="720" Width="1024"
         MouseDown="Window_MouseDown"
         DataContext="RootViewModel">
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="..\Styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            <converters:ObjectToBoolConverter x:Key="ObjectToBoolConverter"/>
-        </ResourceDictionary>
-    </Window.Resources>
 
     <DockPanel>
         <Menu DockPanel.Dock="Top" Name="menu" Background="White" VerticalAlignment="Top">
@@ -106,10 +97,10 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <custom:SoundControl Text="{Binding Sound.Name, Mode=TwoWay}" FilePath="{Binding Sound.FilePath, Mode=TwoWay}"  Volume="{Binding Volume, Mode=TwoWay}">
+                            <custom:SoundControl SoundPropertyModel="{Binding Path=., Mode=TwoWay}">
                                 <custom:SoundControl.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Rename" Click="{s:Action RenameSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                        <MenuItem Header="Edit" Click="{s:Action EditSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                         <MenuItem Header="Clone" Click="{s:Action CloneSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                         <MenuItem Header="Delete" Click="{s:Action RemoveSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                     </ContextMenu>

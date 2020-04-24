@@ -16,11 +16,18 @@ namespace SoundMixer.Models
         private SoundModel sound;
 
         [JsonProperty]
+        private bool isLoop;
+
+        [JsonProperty]
+        private bool isDelayed;
+
+        [JsonProperty]
+        private int delayTime;
+
+        [JsonProperty]
         private Guid guid;
 
-        /*private bool single;
-
-        private double timeInterval;
+        /*private double timeInterval;
 
         private bool randomInterval;*/
 
@@ -36,6 +43,23 @@ namespace SoundMixer.Models
             set { this.SetAndNotify(ref this.sound, value); }
         }
 
+        public bool IsLoop
+        {
+            get { return this.isLoop; }
+            set { this.SetAndNotify(ref this.isLoop, value); }
+        }
+
+        public bool IsDelayed
+        {
+            get { return this.isDelayed; }
+            set { this.SetAndNotify(ref this.isDelayed, value); }
+        }
+
+        public int DelayTime
+        {
+            get { return this.delayTime; }
+            set { this.SetAndNotify(ref this.delayTime, value); }
+        }
 
         public Guid GUID
         {
@@ -47,6 +71,8 @@ namespace SoundMixer.Models
         {
             Volume = volume;
             GUID = guid;
+            IsLoop = true;
+            IsDelayed = false;
         }
     }
 }

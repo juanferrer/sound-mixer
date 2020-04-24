@@ -3,8 +3,12 @@ using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+
+using SoundMixer.Models;
 
 namespace SoundMixer.UserControls
 {
@@ -20,39 +24,17 @@ namespace SoundMixer.UserControls
         private string pauseIcon = "pause.png";
         private string stopIcon = "stop.png";
         private bool isPlaying = false;
-        private bool isLooping = true;
 
-        public string Text
+        private Task delayedPlay;
+        private CancellationTokenSource delayedPlayCancellationTokenSource;
+
+        public SoundPropertyModel SoundPropertyModel
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return (SoundPropertyModel)GetValue(SoundPropertyModelProperty); }
+            set { SetValue(SoundPropertyModelProperty, value); }
         }
 
-        public string FilePath
-        {
-            get { return (string)GetValue(FilePathProperty); }
-            set
-            {
-                SetValue(FilePathProperty, value);
-                // We also need to load the file if it exists
-                if (!File.Exists(FilePath))
-                {
-                    player.Source = null;
-                    // Add a red border or something
-                    // TODO
-                }
-            }
-        }
-
-        public double Volume
-        {
-            get { return (double)GetValue(VolumeProperty); }
-            set { SetValue(VolumeProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(SoundControl));
-        public static readonly DependencyProperty FilePathProperty = DependencyProperty.Register("FilePath", typeof(string), typeof(SoundControl));
-        public static readonly DependencyProperty VolumeProperty = DependencyProperty.Register("Volume", typeof(double), typeof(SoundControl));
+        public static readonly DependencyProperty SoundPropertyModelProperty = DependencyProperty.Register("SoundPropertyModel", typeof(SoundPropertyModel), typeof(SoundControl));
 
         public SoundControl()
         {
@@ -80,18 +62,49 @@ namespace SoundMixer.UserControls
         public void Play()
         {
             UpdatePlayer();
+            player.Position = TimeSpan.Zero;
             player.Play();
             isPlaying = true;
-            isLooping = true;
             UpdatePlayButtonIcon();
+        }
+
+        public Task AsyncPlay()
+        {
+            UpdatePlayer();
+            int delayTime = SoundPropertyModel.DelayTime;
+            isPlaying = true;
+            UpdatePlayButtonIcon();
+
+            // Create a new cancellation token source if the one we have is used (or we don't have one)
+            if (delayedPlayCancellationTokenSource?.IsCancellationRequested ?? true)
+            {
+                delayedPlayCancellationTokenSource = new CancellationTokenSource();
+            }
+
+            return Task.Factory.StartNew(async () =>
+            {
+                await Task.Delay(delayTime);
+                if (delayedPlayCancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                {
+                    Play();
+                }));
+            }, delayedPlayCancellationTokenSource.Token);
         }
 
         public void Stop()
         {
             UpdatePlayer();
+            if (SoundPropertyModel.IsDelayed)
+            {
+                delayedPlayCancellationTokenSource.Cancel();
+            }
             player.Stop();
             isPlaying = false;
-            isLooping = false;
             UpdatePlayButtonIcon();
         }
 
@@ -104,24 +117,37 @@ namespace SoundMixer.UserControls
             else
             {
                 // First, does it exist?
-                if (!File.Exists(FilePath))
+                if (!File.Exists(SoundPropertyModel.Sound.FilePath))
                 {
                     // Add a red border
                     playButton.BorderBrush = new SolidColorBrush(missingSoundColor);
                     return;
                 }
 
-                Play();
+                if (SoundPropertyModel.IsDelayed)
+                {
+                    AsyncPlay();
+                }
+                else
+                {
+                    Play();
+                }
             }
         }
 
         private void SoundMediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             // The sound may have to loop
-            if (isLooping)
+            if (SoundPropertyModel.IsLoop)
             {
-                player.Position = TimeSpan.Zero;
-                player.Play();
+                if (SoundPropertyModel.IsDelayed)
+                {
+                    AsyncPlay();
+                }
+                else
+                {
+                    Play();
+                }
             }
             else
             {

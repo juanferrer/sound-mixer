@@ -16,6 +16,8 @@ namespace SoundMixer.ViewModels
 {
     public class RootViewModel : Screen
     {
+        private IWindowManager windowManager;
+
         private static double defaultVolume = 0.5;
         private string activeFilePath;
         private bool isDirty = false;
@@ -46,8 +48,10 @@ namespace SoundMixer.ViewModels
             set { this.SetAndNotify(ref this.selectedMood, value); }
         }
 
-        public RootViewModel()
+        public RootViewModel(IWindowManager windowManager)
         {
+            this.windowManager = windowManager;
+
             Workspace = new WorkspaceModel();
 
             styles = new ResourceDictionary()
@@ -600,11 +604,12 @@ namespace SoundMixer.ViewModels
             }
         }
 
-        public void RenameSoundControl_Click(object sender, RoutedEventArgs e)
+        public void EditSoundControl_Click(object sender, RoutedEventArgs e)
         {
             var soundControl = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl);
 
-            soundControl.EnterEditMode();
+            var soundEditViewModel = new SoundEditViewModel(soundControl.SoundPropertyModel);
+            this.windowManager.ShowDialog(soundEditViewModel);
         }
 
         public void CloneSoundControl_Click(object sender, RoutedEventArgs e)
@@ -614,10 +619,11 @@ namespace SoundMixer.ViewModels
 
         public void RemoveSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            string name = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl).Text;
-            if (name != null)
+            //string name = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl).Text;
+            Guid guid = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl).SoundPropertyModel.GUID;
+            if (guid != null)
             {
-                RemoveSound(name);
+                RemoveSound(guid);
             }
         }
 
