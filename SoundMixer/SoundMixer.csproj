@@ -7,19 +7,26 @@
     <Authors>Juan Ferrer</Authors>
     <Company>Juan Ferrer</Company>
     <SignAssembly>false</SignAssembly>
+    <StartupObject>SoundMixer.App</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\loop.png" />
     <None Remove="Resources\pause.png" />
     <None Remove="Resources\play.png" />
     <None Remove="Resources\stop.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\loop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\pause.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

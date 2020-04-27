@@ -14,18 +14,29 @@
         </Grid.RowDefinitions>
         <TextBox Text="{Binding SoundPropertyModel.Sound.Name, Mode=TwoWay}" Grid.Row="0" FontSize="25" TextAlignment="Center"/>
         <StackPanel Grid.Row="1" Margin="5">
-            <RadioButton Content="Loop" GroupName="SoundType" IsChecked="{Binding SoundPropertyModel.IsLoop, Mode=TwoWay}"/>
-            <StackPanel Name="LoopPanel" Style="{StaticResource InnerPanel}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="110"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <CheckBox Name="DelayCheckBox" Content="Delay loop (ms):" Grid.Column="0" IsChecked="{Binding SoundPropertyModel.IsDelayed, Mode=TwoWay}"/>
-                    <TextBox Text="{Binding SoundPropertyModel.DelayTime, Mode=TwoWay}" TextChanged="{s:Action TextBox_TextChanged}" Grid.Column="1" IsEnabled="{Binding ElementName=DelayCheckBox, Path=IsChecked, TargetNullValue=False}"/>
-                </Grid>
-            </StackPanel>
-            <RadioButton Content="Single" GroupName="SoundType" IsChecked="{Binding SoundPropertyModel.IsLoop, Mode=TwoWay, Converter={StaticResource InverseBooleanConverter}}"/>
+            <CheckBox Content="Loop" IsChecked="{Binding SoundPropertyModel.IsLoop, Mode=TwoWay}"/>
+            <GroupBox>
+                <GroupBox.Header>
+                    <CheckBox Name="IsDelayedCheckBox" Content="Delay" IsChecked="{Binding SoundPropertyModel.IsDelayed, Mode=TwoWay}"/>
+                </GroupBox.Header>
+                <StackPanel IsEnabled="{Binding SoundPropertyModel.IsDelayed}">
+                    <RadioButton Content="Random delay" GroupName="DelayType" IsChecked="{Binding SoundPropertyModel.UseRandomDelay, Mode=TwoWay}"/>
+                    <StackPanel IsEnabled="{Binding SoundPropertyModel.UseRandomDelay}" Margin="20,0,0,0">
+                        <DockPanel Margin="0,2,0,2">
+                            <TextBlock Text="min (ms):"/>
+                            <TextBox Text="{Binding SoundPropertyModel.MinDelay, Mode=TwoWay}" TextChanged="{s:Action TextBox_TextChanged}" HorizontalAlignment="Right" Width="150" />
+                        </DockPanel>
+                        <DockPanel Margin="0,2,0,2">
+                            <TextBlock Text="max (ms):"/>
+                            <TextBox Text="{Binding SoundPropertyModel.MaxDelay, Mode=TwoWay}" TextChanged="{s:Action TextBox_TextChanged}" HorizontalAlignment="Right" Width="150"/>
+                        </DockPanel>
+                    </StackPanel>
+                    <DockPanel Margin="0,2,0,2">
+                        <RadioButton Content="Set delay (ms):" GroupName="DelayType" IsChecked="{Binding SoundPropertyModel.UseRandomDelay, Converter={StaticResource InverseBooleanConverter}}"/>
+                        <TextBox Text="{Binding SoundPropertyModel.DelayTime, Mode=TwoWay}" TextChanged="{s:Action TextBox_TextChanged}"  HorizontalAlignment="Right" Width="150"/>
+                    </DockPanel>
+                </StackPanel>
+            </GroupBox>
             <StackPanel Name="SinglePanel" Style="{StaticResource InnerPanel}">
             </StackPanel>
         </StackPanel>

@@ -24,7 +24,7 @@ namespace SoundMixer.UserControls
         private string pauseIcon = "pause.png";
         private string stopIcon = "stop.png";
 
-        private Task delayedPlay;
+        private Random rng;
         private CancellationTokenSource delayedPlayCancellationTokenSource;
 
         public SoundPropertyModel SoundPropertyModel
@@ -45,6 +45,8 @@ namespace SoundMixer.UserControls
         public SoundControl()
         {
             InitializeComponent();
+
+            rng = new Random();
         }
 
         private void UpdatePlayer()
@@ -68,6 +70,13 @@ namespace SoundMixer.UserControls
         public Task AsyncPlay()
         {
             UpdatePlayer();
+
+            if (SoundPropertyModel.UseRandomDelay)
+            {
+                // We need to set a new delay for this loop
+                SoundPropertyModel.DelayTime = rng.Next(SoundPropertyModel.MinDelay, SoundPropertyModel.MaxDelay);
+            }
+
             int delayTime = SoundPropertyModel.DelayTime;
             IsPlaying = true;
 

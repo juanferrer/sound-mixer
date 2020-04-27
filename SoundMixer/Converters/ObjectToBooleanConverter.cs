@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace SoundMixer.Converters
 {
-    class ObjectToBoolConverter : IValueConverter
+    class ObjectToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

@@ -25,8 +25,14 @@
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Header="Add _Scene" Click="{s:Action AddScene_Click}"/>
-                <MenuItem Header="Add _Mood" Click="{s:Action AddMood_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
-                <MenuItem Header="Add Soun_d" Click="{s:Action AddSound_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
+                <MenuItem Header="Add _Mood" Click="{s:Action AddMood_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
+                <MenuItem Header="Add Soun_d" Click="{s:Action AddSound_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_View Help" IsEnabled="False"/>
+                <MenuItem Header="_Send Feedback" IsEnabled="False"/>
+                <Separator/>
+                <MenuItem Header="_About" IsEnabled="False"/>
             </MenuItem>
         </Menu>
         <Separator DockPanel.Dock="Top"/>
@@ -87,7 +93,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-            <Button x:Name="addMoodButton" Content="Add mood" Click="{s:Action AddMood_Click}" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBoolConverter}}"/>
+            <Button x:Name="addMoodButton" Content="Add mood" Click="{s:Action AddMood_Click}" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBooleanConverter}}"/>
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
@@ -119,7 +125,7 @@
                 </ItemsControl>
             </ScrollViewer>
             </Grid>
-            <Button x:Name="addSoundButton" Content="Add sound" Click="{s:Action AddSound_Click}" Grid.Column="2" Grid.Row="1" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
+            <Button x:Name="addSoundButton" Content="Add sound" Click="{s:Action AddSound_Click}" Grid.Column="2" Grid.Row="1" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
         </Grid>
     </DockPanel>
 </Window>

@@ -25,11 +25,17 @@ namespace SoundMixer.Models
         private int delayTime;
 
         [JsonProperty]
+        private bool useRandomDelay;
+
+        [JsonProperty]
+        private int minDelay;
+
+        [JsonProperty]
+        private int maxDelay;
+
+        [JsonProperty]
         private Guid guid;
 
-        /*private double timeInterval;
-
-        private bool randomInterval;*/
 
         public double Volume
         {
@@ -55,10 +61,28 @@ namespace SoundMixer.Models
             set { this.SetAndNotify(ref this.isDelayed, value); }
         }
 
+        public bool UseRandomDelay
+        {
+            get { return this.useRandomDelay; }
+            set { this.SetAndNotify(ref this.useRandomDelay, value); }
+        }
+
         public int DelayTime
         {
             get { return this.delayTime; }
             set { this.SetAndNotify(ref this.delayTime, value); }
+        }
+
+        public int MinDelay
+        {
+            get { return this.minDelay; }
+            set { this.SetAndNotify(ref this.minDelay, value); }
+        }
+
+        public int MaxDelay
+        {
+            get { return this.maxDelay; }
+            set { this.SetAndNotify(ref this.maxDelay, value); }
         }
 
         public Guid GUID
@@ -73,6 +97,8 @@ namespace SoundMixer.Models
             GUID = guid;
             IsLoop = true;
             IsDelayed = false;
+            MinDelay = 0;
+            MaxDelay = 60000; // A minute
         }
     }
 }
