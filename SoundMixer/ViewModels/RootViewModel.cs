@@ -19,13 +19,14 @@ namespace SoundMixer.ViewModels
         private IWindowManager windowManager;
 
         private static double defaultVolume = 0.5;
-        private string activeFilePath;
         private bool isDirty = false;
         private ResourceDictionary styles;
         private Style defaultSceneButtonStyle;
         private Style selectedSceneButtonStyle;
         private Style defaultMoodButtonStyle;
         private Style selectedMoodButtonStyle;
+
+        private string activeFilePath;
 
         private WorkspaceModel workspace;
         public WorkspaceModel Workspace
@@ -496,7 +497,8 @@ namespace SoundMixer.ViewModels
                 string path = openFileDialog.FileName;
                 if (File.Exists(path))
                 {
-                    LoadWorkspace(path);
+                    activeFilePath = path;
+                    LoadWorkspace(activeFilePath);
                 }
             }
         }
@@ -528,7 +530,8 @@ namespace SoundMixer.ViewModels
             saveFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
             if ((bool)saveFileDialog.ShowDialog())
             {
-                SaveWorkspace(saveFileDialog.FileName);
+                activeFilePath = saveFileDialog.FileName;
+                SaveWorkspace(activeFilePath);
                 isDirty = false;
             }
         }

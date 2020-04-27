@@ -54,11 +54,6 @@ namespace SoundMixer.UserControls
             player.Volume = volumeSlider.Value;
         }
 
-        public void EnterEditMode()
-        {
-            editableTextBlock.EnterEditMode();
-        }
-
         public void Play()
         {
             UpdatePlayer();
@@ -168,11 +163,6 @@ namespace SoundMixer.UserControls
         private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             player.Volume = volumeSlider.Value;
-        }
-
-        private void EditableTextBlock_LostFocus(object sender, RoutedEventArgs e)
-        {
-
         }
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)

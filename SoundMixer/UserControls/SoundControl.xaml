@@ -7,13 +7,12 @@
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="500">
     <Grid>
-        <local:EditableTextBlock x:Name="editableTextBlock" Text="{Binding SoundPropertyModel.Sound.Name, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" Margin="76,10,10,64" FontSize="18" HorizontalContentAlignment="Left" LostFocus="EditableTextBlock_LostFocus"/>
+        <TextBlock x:Name="editableTextBlock" Text="{Binding SoundPropertyModel.Sound.Name, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" Margin="76,10,10,64" FontSize="18"/>
         <Button Name="playButton" Width="50" Height="50" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Click="PlayButton_Click">
             <Image Name="playButtonImage" Style="{StaticResource PlayButtonImage}" DataContext="{Binding IsPlaying, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
         </Button>
         <Slider Name="volumeSlider" Margin="65,0,10,0" VerticalAlignment="Center" Value="{Binding SoundPropertyModel.Volume, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" Maximum="1" ValueChanged="VolumeSlider_ValueChanged" SmallChange="0.01" LargeChange="0.05"/>
         <Image Source="../Resources/loop.png" Width="24" Height="24" Visibility="{Binding SoundPropertyModel.IsLoop, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="48,15,0,0" />
         <MediaElement Name="player" Source="{Binding SoundPropertyModel.Sound.FilePath, RelativeSource={RelativeSource AncestorType=UserControl}}" VerticalAlignment="Bottom" Height="10" MediaEnded="SoundMediaElement_MediaEnded" LoadedBehavior="Manual" UnloadedBehavior="Manual"/>
-
     </Grid>
 </UserControl>

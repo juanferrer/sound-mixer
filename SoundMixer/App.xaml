@@ -14,9 +14,9 @@
                 </s:ApplicationLoader>
                 <ResourceDictionary Source="\Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
