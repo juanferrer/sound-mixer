@@ -434,7 +434,7 @@ namespace SoundMixer.ViewModels
 
                 foreach (var soundControl in soundControls)
                 {
-                    if (!soundControl.IsPlaying)
+                    if (!soundControl.IsPlaying && soundControl.SoundPropertyModel.IsLoop)
                     {
                         // Don't want to accidentally restart a sound
                         soundControl.PlayOrStop();
