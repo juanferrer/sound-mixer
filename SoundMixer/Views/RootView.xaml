@@ -12,6 +12,12 @@
         Title="Sound Mixer" Height="720" Width="1024"
         DataContext="RootViewModel">
 
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{s:Action NewWorkspaceFile}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{s:Action OpenWorkspaceFile}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{s:Action SaveWorkspaceFile}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{s:Action SaveWorkspaceFileAs}"/>
+    </Window.InputBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top" Name="menu" Background="White" VerticalAlignment="Top">
             <MenuItem Header="_File" VerticalAlignment="Stretch">
@@ -59,7 +65,6 @@
                                 <Button.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Rename" Click="{s:Action RenameSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
-                                        <MenuItem Header="Clone" Click="{s:Action CloneSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                         <MenuItem Header="Delete" Click="{s:Action RemoveSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                     </ContextMenu>
                                 </Button.ContextMenu>
@@ -83,7 +88,6 @@
                                 <Button.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Rename" Click="{s:Action RenameMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
-                                        <MenuItem Header="Clone" Click="{s:Action CloneMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                         <MenuItem Header="Delete" Click="{s:Action RemoveMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
                                     </ContextMenu>
                                 </Button.ContextMenu>

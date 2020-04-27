@@ -468,10 +468,9 @@ namespace SoundMixer.ViewModels
             }
         }
 
-        #region EventHandlers
-
-        public void New_Click(object sender, RoutedEventArgs e)
+        public void NewWorkspaceFile()
         {
+            StopAllSounds();
             if (isDirty)
             {
                 // Want to save?
@@ -482,8 +481,9 @@ namespace SoundMixer.ViewModels
             SelectedMood = null;
         }
 
-        public void Open_Click(object sender, RoutedEventArgs e)
+        public void OpenWorkspaceFile()
         {
+            StopAllSounds();
             if (isDirty)
             {
                 // Want to save?
@@ -503,7 +503,7 @@ namespace SoundMixer.ViewModels
             }
         }
 
-        public void Save_Click(object sender, RoutedEventArgs e)
+        public void SaveWorkspaceFile()
         {
             // We should save over the previously used file, if any
             if (string.IsNullOrEmpty(activeFilePath))
@@ -524,7 +524,7 @@ namespace SoundMixer.ViewModels
             isDirty = false;
         }
 
-        public void SaveAs_Click(object sender, RoutedEventArgs e)
+        public void SaveWorkspaceFileAs()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
@@ -534,6 +534,28 @@ namespace SoundMixer.ViewModels
                 SaveWorkspace(activeFilePath);
                 isDirty = false;
             }
+        }
+
+        #region EventHandlers
+
+        public void New_Click(object sender, RoutedEventArgs e)
+        {
+            NewWorkspaceFile();
+        }
+
+        public void Open_Click(object sender, RoutedEventArgs e)
+        {
+            OpenWorkspaceFile();
+        }
+
+        public void Save_Click(object sender, RoutedEventArgs e)
+        {
+            SaveWorkspaceFile();
+        }
+
+        public void SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            SaveWorkspaceFileAs();
         }
 
         public void AddScene_Click(object sender, RoutedEventArgs e)
@@ -595,11 +617,6 @@ namespace SoundMixer.ViewModels
             editableTextBlock.EnterEditMode();
         }
 
-        public void CloneSceneButton_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         public void RemoveSceneButton_Click(object sender, RoutedEventArgs e)
         {
             string name = ((((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock).Text;
@@ -614,11 +631,6 @@ namespace SoundMixer.ViewModels
             var editableTextBlock = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock;
 
             editableTextBlock.EnterEditMode();
-        }
-
-        public void CloneMoodButton_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         public void RemoveMoodButton_Click(object sender, RoutedEventArgs e)
