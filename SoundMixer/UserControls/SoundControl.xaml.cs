@@ -20,9 +20,6 @@ namespace SoundMixer.UserControls
         private static Color missingSoundColor = Color.FromRgb(255, 0, 0);
 
         private string resourcesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
-        private string playIcon = "play.png";
-        private string pauseIcon = "pause.png";
-        private string stopIcon = "stop.png";
 
         private Random rng;
         private CancellationTokenSource delayedPlayCancellationTokenSource;

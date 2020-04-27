@@ -10,7 +10,6 @@
         xmlns:custom="clr-namespace:SoundMixer.UserControls"
         mc:Ignorable="d"
         Title="Sound Mixer" Height="720" Width="1024"
-        MouseDown="Window_MouseDown"
         DataContext="RootViewModel">
 
     <DockPanel>

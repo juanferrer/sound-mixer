@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:s="https://github.com/canton7/Stylet"
         xmlns:local="clr-namespace:SoundMixer.Views"
+        xmlns:custom="clr-namespace:SoundMixer.UserControls"
         mc:Ignorable="d"
-        Title="Edit sound" Height="300" Width="300">
+        Title="Edit sound" Height="300" Width="300" ResizeMode="CanMinimize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50px"/>
@@ -14,6 +15,8 @@
         </Grid.RowDefinitions>
         <TextBox Text="{Binding SoundPropertyModel.Sound.Name, Mode=TwoWay}" Grid.Row="0" FontSize="25" TextAlignment="Center"/>
         <StackPanel Grid.Row="1" Margin="5">
+            <Label Content="Current file:"/>
+            <custom:BrowseControl Text="Browse" FilePath="{Binding SoundPropertyModel.Sound.FilePath, Mode=TwoWay}" Margin="5"/>
             <CheckBox Content="Loop" IsChecked="{Binding SoundPropertyModel.IsLoop, Mode=TwoWay}"/>
             <GroupBox>
                 <GroupBox.Header>

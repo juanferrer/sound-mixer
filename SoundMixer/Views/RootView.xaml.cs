@@ -21,13 +21,5 @@ namespace SoundMixer.Views
         {
             InitializeComponent();
         }
-
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (Keyboard.FocusedElement is TextBox)
-            {
-                mainGrid.Focus();
-            }
-        }
     }
 }
