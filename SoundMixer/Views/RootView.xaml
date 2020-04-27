@@ -88,7 +88,15 @@
                 </ItemsControl>
             </ScrollViewer>
             <Button x:Name="addMoodButton" Content="Add mood" Click="{s:Action AddMood_Click}" Grid.Column="1" Grid.Row="1" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBoolConverter}}"/>
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Button Name="playAllButton" Height="50" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="{s:Action PlayAllButton_Click}">
+                    <Image Name="playAllButtonImage" Style="{StaticResource PlayButtonImage}" DataContext="{Binding IsPlayingAll}"/>
+                </Button>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                 <ItemsControl x:Name="soundStack" ItemsSource="{Binding SelectedMood.SoundProperties}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -110,6 +118,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+            </Grid>
             <Button x:Name="addSoundButton" Content="Add sound" Click="{s:Action AddSound_Click}" Grid.Column="2" Grid.Row="1" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBoolConverter}}"/>
         </Grid>
     </DockPanel>

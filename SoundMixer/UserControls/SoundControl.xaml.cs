@@ -23,7 +23,6 @@ namespace SoundMixer.UserControls
         private string playIcon = "play.png";
         private string pauseIcon = "pause.png";
         private string stopIcon = "stop.png";
-        private bool isPlaying = false;
 
         private Task delayedPlay;
         private CancellationTokenSource delayedPlayCancellationTokenSource;
@@ -34,19 +33,18 @@ namespace SoundMixer.UserControls
             set { SetValue(SoundPropertyModelProperty, value); }
         }
 
+        public bool IsPlaying
+        {
+            get { return (bool)GetValue(IsPlayingProperty); }
+            set { SetValue(IsPlayingProperty, value); }
+        }
+
         public static readonly DependencyProperty SoundPropertyModelProperty = DependencyProperty.Register("SoundPropertyModel", typeof(SoundPropertyModel), typeof(SoundControl));
+        public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register("IsPlaying", typeof(bool), typeof(SoundControl));
 
         public SoundControl()
         {
             InitializeComponent();
-
-            // Set the default icon for the PlayButton
-            UpdatePlayButtonIcon();
-        }
-
-        private void UpdatePlayButtonIcon()
-        {
-            playButtonImage.Source = new BitmapImage(new Uri(Path.Combine(resourcesPath, isPlaying ? stopIcon : playIcon)));
         }
 
         private void UpdatePlayer()
@@ -64,16 +62,14 @@ namespace SoundMixer.UserControls
             UpdatePlayer();
             player.Position = TimeSpan.Zero;
             player.Play();
-            isPlaying = true;
-            UpdatePlayButtonIcon();
+            IsPlaying = true;
         }
 
         public Task AsyncPlay()
         {
             UpdatePlayer();
             int delayTime = SoundPropertyModel.DelayTime;
-            isPlaying = true;
-            UpdatePlayButtonIcon();
+            IsPlaying = true;
 
             // Create a new cancellation token source if the one we have is used (or we don't have one)
             if (delayedPlayCancellationTokenSource?.IsCancellationRequested ?? true)
@@ -104,13 +100,12 @@ namespace SoundMixer.UserControls
                 delayedPlayCancellationTokenSource.Cancel();
             }
             player.Stop();
-            isPlaying = false;
-            UpdatePlayButtonIcon();
+            IsPlaying = false;
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        public void PlayOrStop()
         {
-            if (isPlaying)
+            if (IsPlaying)
             {
                 Stop();
             }
@@ -135,6 +130,11 @@ namespace SoundMixer.UserControls
             }
         }
 
+        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlayOrStop();
+        }
+
         private void SoundMediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             // The sound may have to loop
@@ -152,8 +152,7 @@ namespace SoundMixer.UserControls
             else
             {
                 player.Stop();
-                isPlaying = false;
-                UpdatePlayButtonIcon();
+                IsPlaying = false;
             }
         }
 

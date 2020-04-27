@@ -48,6 +48,14 @@ namespace SoundMixer.ViewModels
             set { this.SetAndNotify(ref this.selectedMood, value); }
         }
 
+        private bool isPlayingAll;
+        public bool IsPlayingAll
+        {
+            get { return this.isPlayingAll; }
+            set { this.SetAndNotify(ref this.isPlayingAll, value); }
+        }
+
+
         public RootViewModel(IWindowManager windowManager)
         {
             this.windowManager = windowManager;
@@ -426,8 +434,15 @@ namespace SoundMixer.ViewModels
 
                 foreach (var soundControl in soundControls)
                 {
-                    soundControl.Play();
+                    if (!soundControl.IsPlaying)
+                    {
+                        // Don't want to accidentally restart a sound
+                        soundControl.PlayOrStop();
+                    }
                 }
+
+                // Also update the icon
+                IsPlayingAll = true;
             }
         }
 
@@ -440,8 +455,15 @@ namespace SoundMixer.ViewModels
 
                 foreach (var soundControl in soundControls)
                 {
-                    soundControl.Stop();
+                    if (soundControl.IsPlaying)
+                    {
+                        // Don't want to accidentally restart a sound
+                        soundControl.PlayOrStop();
+                    }
                 }
+
+                // And update the icon
+                IsPlayingAll = false;
             }
         }
 
@@ -468,6 +490,7 @@ namespace SoundMixer.ViewModels
             }
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
                 string path = openFileDialog.FileName;
@@ -484,7 +507,7 @@ namespace SoundMixer.ViewModels
             if (string.IsNullOrEmpty(activeFilePath))
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                saveFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
                 if ((bool)saveFileDialog.ShowDialog())
                 {
                     activeFilePath = saveFileDialog.FileName;
@@ -502,7 +525,7 @@ namespace SoundMixer.ViewModels
         public void SaveAs_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+            saveFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
             if ((bool)saveFileDialog.ShowDialog())
             {
                 SaveWorkspace(saveFileDialog.FileName);
@@ -624,6 +647,19 @@ namespace SoundMixer.ViewModels
             if (guid != null)
             {
                 RemoveSound(guid);
+            }
+        }
+
+        public void PlayAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsPlayingAll)
+            {
+                StopAllSounds();
+            }
+            else
+            {
+
+                PlayAllSounds();
             }
         }
 
