@@ -103,6 +103,8 @@ namespace SoundMixer.ViewModels
         public void AddScene(string sceneName)
         {
             Workspace.Scenes.Add(new SceneModel(GetUniqueNameFromString(sceneName, Workspace.Scenes.Select(o => o.Name).ToList())));
+
+            isDirty = true;
         }
 
         /// <summary>
@@ -124,6 +126,8 @@ namespace SoundMixer.ViewModels
                     {
                         SelectScene(0);
                     }
+
+                    isDirty = true;
                 }
             }
         }
@@ -144,6 +148,8 @@ namespace SoundMixer.ViewModels
                 newMood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, sound.GUID));
                 newMood.SoundProperties.LastOrDefault().Sound = sound;
             }
+
+            isDirty = true;
         }
 
         /// <summary>
@@ -161,10 +167,12 @@ namespace SoundMixer.ViewModels
                     SelectedScene.Moods.RemoveAt(i);
 
                     // Select a different mood if we deleted the selected one
-                    if (SelectedMood.Name == moodName)
+                    /*if (SelectedMood.Name == moodName)
                     {
                         SelectedMood = SelectedScene.Moods.Count > 0 ? SelectedScene.Moods[0] : null;
-                    }
+                    }*/
+
+                    isDirty = true;
                 }
             }
         }
@@ -188,6 +196,8 @@ namespace SoundMixer.ViewModels
                 SoundModel sound = FindSoundFromGuid(newSound.GUID);
                 mood.SoundProperties.LastOrDefault().Sound = sound;
             }
+
+            isDirty = true;
         }
 
         /// <summary>
@@ -213,6 +223,8 @@ namespace SoundMixer.ViewModels
             {
                 mood.SoundProperties.RemoveAt(soundIndex);
             }
+
+            isDirty = true;
         }
 
         /// <summary>
@@ -238,6 +250,8 @@ namespace SoundMixer.ViewModels
             {
                 mood.SoundProperties.RemoveAt(soundIndex);
             }
+
+            isDirty = true;
         }
 
         public void SelectScene(string name)
@@ -469,17 +483,44 @@ namespace SoundMixer.ViewModels
             }
         }
 
+        public bool ContinueAfterOfferSave()
+        {
+            string fileName = Path.GetFileNameWithoutExtension(activeFilePath);
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = "Untitled";
+            }
+            string message = "Do you want to save changes to " + fileName;
+            var result = MessageBox.Show(message, "SoundMixer", MessageBoxButton.YesNoCancel);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                SaveWorkspaceFile();
+                return true;
+            }
+            else if (result == MessageBoxResult.No)
+            {
+                isDirty = false;
+                return true;
+            }
+
+            return false;
+        }
+
         public void NewWorkspaceFile()
         {
             StopAllSounds();
             if (isDirty)
             {
-                // Want to save?
-                // TODO
+                if (!ContinueAfterOfferSave())
+                {
+                    return;
+                }
             }
             Workspace = new WorkspaceModel();
             SelectedScene = null;
             SelectedMood = null;
+            activeFilePath = "";
         }
 
         public void OpenWorkspaceFile()
@@ -487,8 +528,10 @@ namespace SoundMixer.ViewModels
             StopAllSounds();
             if (isDirty)
             {
-                // Want to save?
-                // TODO
+                if (!ContinueAfterOfferSave())
+                {
+                    return;
+                }
             }
 
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -575,10 +618,10 @@ namespace SoundMixer.ViewModels
             AddMood("New Mood");
 
             // Select mood if none selected
-            if (SelectedMood == null)
+            /*if (SelectedMood == null)
             {
                 SelectMood(SelectedScene.Moods[0].Name);
-            }
+            }*/
         }
 
         public void AddSound_Click(object sender, RoutedEventArgs e)
