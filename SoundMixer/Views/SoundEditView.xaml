@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:SoundMixer.Views"
         xmlns:custom="clr-namespace:SoundMixer.UserControls"
         mc:Ignorable="d"
-        Title="Edit sound" Height="300" Width="300" ResizeMode="CanMinimize">
+        Title="Edit sound" Height="300" Width="300" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50px"/>

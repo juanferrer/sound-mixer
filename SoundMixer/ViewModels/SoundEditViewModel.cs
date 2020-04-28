@@ -4,13 +4,14 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.Win32;
+
 using SoundMixer.Models;
 using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
 using Stylet;
-using System.Windows.Input;
 
 namespace SoundMixer.ViewModels
 {

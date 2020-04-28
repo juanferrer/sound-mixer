@@ -3,11 +3,11 @@
 namespace SoundMixer.Views
 {
     /// <summary>
-    /// Interaction logic for RootView.xaml
+    /// Interaction logic for AboutView.xaml
     /// </summary>
-    public partial class RootView : Window
+    public partial class AboutView : Window
     {
-        public RootView()
+        public AboutView()
         {
             InitializeComponent();
         }

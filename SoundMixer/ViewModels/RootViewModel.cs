@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+
 using SoundMixer.Models;
 using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
 using Stylet;
-using System.Linq;
 
 namespace SoundMixer.ViewModels
 {
@@ -676,6 +677,12 @@ namespace SoundMixer.ViewModels
 
                 PlayAllSounds();
             }
+        }
+
+        public void About_Click(object sender, RoutedEventArgs e)
+        {
+            var aboutViewModel = new AboutViewModel();
+            this.windowManager.ShowDialog(aboutViewModel);
         }
 
         #endregion

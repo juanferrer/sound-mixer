@@ -8,6 +8,7 @@
     <Company>Juan Ferrer</Company>
     <SignAssembly>false</SignAssembly>
     <StartupObject>SoundMixer.App</StartupObject>
+    <RepositoryUrl>https://github.com/juanferrer/sound-mixer</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -42,5 +43,21 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Stylet" Version="1.3.1" />
   </ItemGroup>
+
+  <Target Name="BuildDate" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <SharedAssemblyInfoFile>$(IntermediateOutputPath)CustomAssemblyInfo.cs</SharedAssemblyInfoFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <Compile Include="$(SharedAssemblyInfoFile)" />
+    </ItemGroup>
+    <ItemGroup>
+      <AssemblyAttributes Include="AssemblyMetadata">
+        <_Parameter1>AssemblyDate</_Parameter1>
+        <_Parameter2>$([System.DateTime]::UtcNow.ToString("u"))</_Parameter2>
+      </AssemblyAttributes>
+    </ItemGroup>
+    <WriteCodeFragment Language="C#" OutputFile="$(SharedAssemblyInfoFile)" AssemblyAttributes="@(AssemblyAttributes)" />
+  </Target>
 
 </Project>

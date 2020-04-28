@@ -35,9 +35,9 @@
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_View Help" IsEnabled="False"/>
-                <MenuItem Header="_Send Feedback" IsEnabled="False"/>
+                <MenuItem Header="_Report a Bug" IsEnabled="False"/>
                 <Separator/>
-                <MenuItem Header="_About" IsEnabled="False"/>
+                <MenuItem Header="_About" Click="{s:Action About_Click}"/>
             </MenuItem>
         </Menu>
         <Separator DockPanel.Dock="Top"/>
