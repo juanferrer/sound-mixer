@@ -277,7 +277,7 @@ namespace SoundMixer.ViewModels
                 }
             }
 
-            SelectMood(0);
+            //SelectMood(0);
         }
 
         public void SelectScene(int index)
@@ -309,7 +309,7 @@ namespace SoundMixer.ViewModels
                 }
             }
 
-            SelectMood(0);
+            //SelectMood(0);
         }
 
         public void SelectMood(string name)
