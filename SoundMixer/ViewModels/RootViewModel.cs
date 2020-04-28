@@ -193,7 +193,8 @@ namespace SoundMixer.ViewModels
             {
                 if (soundPropertyModel == null)
                 {
-                    mood.SoundProperties.Add(new SoundPropertyModel("", defaultVolume, newSound.GUID));
+                    string newName = GetUniqueNameFromString(newSound.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
+                    mood.SoundProperties.Add(new SoundPropertyModel(newName, defaultVolume, newSound.GUID));
                 }
                 else
                 {
@@ -745,10 +746,11 @@ namespace SoundMixer.ViewModels
 
         public void RemoveSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            //string name = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl).Text;
-            Guid guid = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl).SoundPropertyModel.GUID;
+            var soundControl = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl);
+            Guid guid = soundControl.SoundPropertyModel.GUID;
             if (guid != null)
             {
+                soundControl.PlayOrStop();
                 RemoveSound(guid);
             }
         }
