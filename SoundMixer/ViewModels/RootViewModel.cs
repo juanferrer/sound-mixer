@@ -124,6 +124,7 @@ namespace SoundMixer.ViewModels
                     // Select a different scene and mood if we deleted the selected one
                     if (selectedSceneName == sceneName)
                     {
+                        StopAllSounds();
                         SelectScene(0);
                     }
 
@@ -167,10 +168,11 @@ namespace SoundMixer.ViewModels
                     SelectedScene.Moods.RemoveAt(i);
 
                     // Select a different mood if we deleted the selected one
-                    /*if (SelectedMood.Name == moodName)
+                    if (SelectedMood.Name == moodName)
                     {
-                        SelectedMood = SelectedScene.Moods.Count > 0 ? SelectedScene.Moods[0] : null;
-                    }*/
+                        StopAllSounds();
+                        //SelectedMood = SelectedScene.Moods.Count > 0 ? SelectedScene.Moods[0] : null;
+                    }
 
                     isDirty = true;
                 }
