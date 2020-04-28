@@ -145,7 +145,7 @@ namespace SoundMixer.ViewModels
             // Then add all the sounds from the scene
             foreach (var sound in SelectedScene.Sounds)
             {
-                newMood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, sound.GUID));
+                newMood.SoundProperties.Add(new SoundPropertyModel("", defaultVolume, sound.GUID));
                 newMood.SoundProperties.LastOrDefault().Sound = sound;
             }
 
@@ -181,7 +181,7 @@ namespace SoundMixer.ViewModels
         /// Add a new sound to the selected scene
         /// </summary>
         /// <param name="soundPath"></param>
-        public void AddSound(string soundPath)
+        public void AddSound(string soundPath, SoundPropertyModel soundPropertyModel = null)
         {
             string tempName = Path.GetFileNameWithoutExtension(soundPath);
 
@@ -191,7 +191,23 @@ namespace SoundMixer.ViewModels
             // Then add to every mood
             foreach (var mood in SelectedScene.Moods)
             {
-                mood.SoundProperties.Add(new SoundPropertyModel(defaultVolume, newSound.GUID));
+                if (soundPropertyModel == null)
+                {
+                    mood.SoundProperties.Add(new SoundPropertyModel("", defaultVolume, newSound.GUID));
+                }
+                else
+                {
+                    // Clone the sound
+                    string newName = GetUniqueNameFromString(soundPropertyModel.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
+                    var newSoundPropertyModel = new SoundPropertyModel(newName, soundPropertyModel.Volume, soundPropertyModel.GUID);
+                    newSoundPropertyModel.IsDelayed = soundPropertyModel.IsDelayed;
+                    newSoundPropertyModel.IsLoop = soundPropertyModel.IsLoop;
+                    newSoundPropertyModel.UseRandomDelay = soundPropertyModel.UseRandomDelay;
+                    newSoundPropertyModel.DelayTime = soundPropertyModel.DelayTime;
+                    newSoundPropertyModel.MinDelay = soundPropertyModel.MinDelay;
+                    newSoundPropertyModel.MaxDelay = soundPropertyModel.MaxDelay;
+                    mood.SoundProperties.Add(newSoundPropertyModel);
+                }
 
                 SoundModel sound = FindSoundFromGuid(newSound.GUID);
                 mood.SoundProperties.LastOrDefault().Sound = sound;
@@ -201,7 +217,7 @@ namespace SoundMixer.ViewModels
         }
 
         /// <summary>
-        /// Remove a sound from the selected mood in the selected scene
+        /// Remove a sound from the selected scene
         /// </summary>
         /// <param name="soundName"></param>
         public void RemoveSound(string soundName)
@@ -420,6 +436,7 @@ namespace SoundMixer.ViewModels
                     foreach (var mood in scene.Moods)
                     {
                         mood.SoundProperties[i].Sound = sound;
+                        mood.SoundProperties[i].Name = sound.Name;
                     }
                 }
             }
@@ -490,7 +507,7 @@ namespace SoundMixer.ViewModels
             {
                 fileName = "Untitled";
             }
-            string message = "Do you want to save changes to " + fileName;
+            string message = $"Do you want to save changes to {fileName}?";
             var result = MessageBox.Show(message, "SoundMixer", MessageBoxButton.YesNoCancel);
 
             if (result == MessageBoxResult.Yes)
@@ -580,6 +597,47 @@ namespace SoundMixer.ViewModels
             }
         }
 
+
+        public void AddSceneButton()
+        {
+            AddScene("New Scene");
+
+            // Select scene if none selected
+            if (SelectedScene == null)
+            {
+                SelectScene(Workspace.Scenes[0].Name);
+            }
+        }
+
+        public void AddMoodButton()
+        {
+            if (SelectedScene != null)
+            {
+                AddMood("New Mood");
+
+                // Select mood if none selected
+                if (SelectedMood == null)
+                {
+                    SelectMood(SelectedScene.Moods[0].Name);
+                }
+            }
+        }
+
+        public void AddSoundButton()
+        {
+            if (SelectedMood != null)
+            {
+                // First open a file dialog to select the sound
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    string filePath = openFileDialog.FileName;
+                    AddSound(filePath);
+                }
+            }
+        }
+
         #region EventHandlers
 
         public void New_Click(object sender, RoutedEventArgs e)
@@ -604,36 +662,17 @@ namespace SoundMixer.ViewModels
 
         public void AddScene_Click(object sender, RoutedEventArgs e)
         {
-            AddScene("New Scene");
-
-            // Select scene if none selected
-            if (SelectedScene == null)
-            {
-                SelectScene(Workspace.Scenes[0].Name);
-            }
+            AddSceneButton();
         }
 
         public void AddMood_Click(object sender, RoutedEventArgs e)
         {
-            AddMood("New Mood");
-
-            // Select mood if none selected
-            /*if (SelectedMood == null)
-            {
-                SelectMood(SelectedScene.Moods[0].Name);
-            }*/
+            AddMoodButton();
         }
 
         public void AddSound_Click(object sender, RoutedEventArgs e)
         {
-            // First open a file dialog to select the sound
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string filePath = openFileDialog.FileName;
-                AddSound(filePath);
-            }
+            AddSoundButton();
         }
 
         public void SelectScene_LeftMouseUp(object sender, RoutedEventArgs e)
@@ -688,7 +727,7 @@ namespace SoundMixer.ViewModels
 
         public void EditSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            var soundControl = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl);
+            var soundControl = ((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl;
 
             var soundEditViewModel = new SoundEditViewModel(soundControl.SoundPropertyModel);
             this.windowManager.ShowDialog(soundEditViewModel);
@@ -696,7 +735,12 @@ namespace SoundMixer.ViewModels
 
         public void CloneSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var soundPropertyModel = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl)?.SoundPropertyModel;
+
+            if (soundPropertyModel != null)
+            {
+                AddSound(soundPropertyModel.Sound.FilePath, soundPropertyModel);
+            }
         }
 
         public void RemoveSoundControl_Click(object sender, RoutedEventArgs e)

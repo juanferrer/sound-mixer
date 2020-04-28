@@ -9,6 +9,9 @@ namespace SoundMixer.Models
     public class SoundPropertyModel : PropertyChangedBase
     {
         [JsonProperty]
+        private string name;
+
+        [JsonProperty]
         private double volume;
 
         private SoundModel sound;
@@ -34,6 +37,12 @@ namespace SoundMixer.Models
         [JsonProperty]
         private Guid guid;
 
+
+        public string Name
+        {
+            get { return this.name; }
+            set { this.SetAndNotify(ref this.name, value); }
+        }
 
         public double Volume
         {
@@ -89,8 +98,9 @@ namespace SoundMixer.Models
             private set { this.SetAndNotify(ref this.guid, value); }
         }
 
-        public SoundPropertyModel(double volume, Guid guid)
+        public SoundPropertyModel(string name, double volume, Guid guid)
         {
+            Name = name;
             Volume = volume;
             GUID = guid;
             IsLoop = true;

@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="500">
     <Grid>
-        <TextBlock x:Name="editableTextBlock" Text="{Binding SoundPropertyModel.Sound.Name, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" Margin="76,10,10,64" FontSize="18"/>
+        <TextBlock x:Name="editableTextBlock" Text="{Binding SoundPropertyModel.Name, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" Margin="76,10,10,64" FontSize="18"/>
         <Button Name="playButton" Width="50" Height="50" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Click="PlayButton_Click">
             <Image Name="playButtonImage" Style="{StaticResource PlayButtonImage}" DataContext="{Binding IsPlaying, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
         </Button>
