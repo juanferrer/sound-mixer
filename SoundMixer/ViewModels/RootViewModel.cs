@@ -146,7 +146,7 @@ namespace SoundMixer.ViewModels
             // Then add all the sounds from the scene
             foreach (var sound in SelectedScene.Sounds)
             {
-                newMood.SoundProperties.Add(new SoundPropertyModel("", defaultVolume, sound.GUID));
+                newMood.SoundProperties.Add(new SoundPropertyModel(sound.Name, defaultVolume, sound.GUID));
                 newMood.SoundProperties.LastOrDefault().Sound = sound;
             }
 
@@ -511,7 +511,7 @@ namespace SoundMixer.ViewModels
                 fileName = "Untitled";
             }
             string message = $"Do you want to save changes to {fileName}?";
-            var result = MessageBox.Show(message, "SoundMixer", MessageBoxButton.YesNoCancel);
+            var result = this.windowManager.ShowMessageBox(message, "SoundMixer", MessageBoxButton.YesNoCancel);
 
             if (result == MessageBoxResult.Yes)
             {
@@ -698,14 +698,14 @@ namespace SoundMixer.ViewModels
 
         public void RenameSceneButton_Click(object sender, RoutedEventArgs e)
         {
-            var editableTextBlock = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as Button).Content as UserControls.EditableTextBlock;
+            var editableTextBlock = (((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock;
 
             editableTextBlock.EnterEditMode();
         }
 
         public void RemoveSceneButton_Click(object sender, RoutedEventArgs e)
         {
-            string name = ((((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock).Text;
+            string name = ((((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock)?.Text;
             if (name != null)
             {
                 RemoveScene(name);
@@ -714,14 +714,14 @@ namespace SoundMixer.ViewModels
 
         public void RenameMoodButton_Click(object sender, RoutedEventArgs e)
         {
-            var editableTextBlock = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock;
+            var editableTextBlock = (((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock;
 
             editableTextBlock.EnterEditMode();
         }
 
         public void RemoveMoodButton_Click(object sender, RoutedEventArgs e)
         {
-            string name = ((((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock).Text;
+            string name = ((((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock)?.Text;
             if (name != null)
             {
                 RemoveMood(name);
@@ -730,7 +730,7 @@ namespace SoundMixer.ViewModels
 
         public void EditSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            var soundControl = ((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl;
+            var soundControl = ((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as UserControls.SoundControl;
 
             var soundEditViewModel = new SoundEditViewModel(soundControl.SoundPropertyModel);
             this.windowManager.ShowDialog(soundEditViewModel);
@@ -738,7 +738,7 @@ namespace SoundMixer.ViewModels
 
         public void CloneSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            var soundPropertyModel = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl)?.SoundPropertyModel;
+            var soundPropertyModel = (((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as UserControls.SoundControl)?.SoundPropertyModel;
 
             if (soundPropertyModel != null)
             {
@@ -748,11 +748,11 @@ namespace SoundMixer.ViewModels
 
         public void RemoveSoundControl_Click(object sender, RoutedEventArgs e)
         {
-            var soundControl = (((sender as MenuItem)?.CommandParameter as ContextMenu)?.PlacementTarget as UserControls.SoundControl);
+            var soundControl = (((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as UserControls.SoundControl);
             Guid guid = soundControl.SoundPropertyModel.GUID;
             if (guid != null)
             {
-                soundControl.PlayOrStop();
+                soundControl.Stop();
                 RemoveSound(guid);
             }
         }

@@ -9,6 +9,5 @@
     <Grid>
         <TextBlock Name="textBlock" Text="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Center" Focusable="True"/>
         <TextBox Name="textBox" Visibility="Hidden" Text="{Binding Text, ElementName=textBlock, Mode=TwoWay}" LostFocus="TextBox_LostFocus" KeyUp="TextBox_KeyUp"/>
-
     </Grid>
 </UserControl>

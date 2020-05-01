@@ -67,8 +67,8 @@
                                 <custom:EditableTextBlock Style="{StaticResource SceneEditableTextBlock}" Text="{Binding Name, Mode=TwoWay}"/>
                                 <Button.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Rename" Click="{s:Action RenameSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
-                                        <MenuItem Header="Delete" Click="{s:Action RemoveSceneButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                        <MenuItem Header="Rename" Click="{s:Action RenameSceneButton_Click}"/>
+                                        <MenuItem Header="Delete" Click="{s:Action RemoveSceneButton_Click}"/>
                                     </ContextMenu>
                                 </Button.ContextMenu>
                             </Button>
@@ -90,8 +90,8 @@
                                 <custom:EditableTextBlock Style="{StaticResource MoodEditableTextBlock}" Text="{Binding Name, Mode=TwoWay}"/>
                                 <Button.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Rename" Click="{s:Action RenameMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
-                                        <MenuItem Header="Delete" Click="{s:Action RemoveMoodButton_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                        <MenuItem Header="Rename" Click="{s:Action RenameMoodButton_Click}"/>
+                                        <MenuItem Header="Delete" Click="{s:Action RemoveMoodButton_Click}"/>
                                     </ContextMenu>
                                 </Button.ContextMenu>
                             </Button>
@@ -120,9 +120,9 @@
                             <custom:SoundControl SoundPropertyModel="{Binding Path=., Mode=TwoWay}">
                                 <custom:SoundControl.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Edit" Click="{s:Action EditSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
-                                        <MenuItem Header="Clone" Click="{s:Action CloneSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
-                                        <MenuItem Header="Delete" Click="{s:Action RemoveSoundControl_Click}" CommandParameter="{Binding Parent, RelativeSource={RelativeSource Self}}"/>
+                                        <MenuItem Header="Edit" Click="{s:Action EditSoundControl_Click}"/>
+                                        <MenuItem Header="Clone" Click="{s:Action CloneSoundControl_Click}"/>
+                                        <MenuItem Header="Delete" Click="{s:Action RemoveSoundControl_Click}"/>
                                     </ContextMenu>
                                 </custom:SoundControl.ContextMenu>
                             </custom:SoundControl>
