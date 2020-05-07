@@ -12,6 +12,8 @@ using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
 using Stylet;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace SoundMixer.ViewModels
 {
@@ -773,15 +775,18 @@ namespace SoundMixer.ViewModels
 
         public void ReportABug_Click(object sender, RoutedEventArgs e)
         {
+            var executingAssembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
+
             string user = "juanferrer";
             string repo = "sound-mixer";
-            string body = System.Web.HttpUtility.UrlEncode("## Steps to reproduce:\n1. Step 1\n2. Step 2\n3. Step 3\n\n## Actual behaviour\n\n\n## Expected behaviour:\n\n\n## Other details:");
-            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
+            string body = System.Web.HttpUtility.UrlEncode($"Version: {fvi.ProductVersion}\n\n## Steps to reproduce:\n1. Step 1\n2. Step 2\n3. Step 3\n\n## Actual behaviour\n\n\n## Expected behaviour:\n\n\n## Other details:");
+            ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = $"https://github.com/{user}/{repo}/issues/new?body={body}",
                 UseShellExecute = true
             };
-            System.Diagnostics.Process.Start(psi);
+            Process.Start(psi);
         }
 
         public void About_Click(object sender, RoutedEventArgs e)
