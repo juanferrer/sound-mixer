@@ -465,6 +465,7 @@ namespace SoundMixer.ViewModels
         {
             if (View != null)
             {
+                bool foundOne = false;
                 var soundStack = (View as Views.RootView).soundStack;
                 List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
@@ -474,11 +475,12 @@ namespace SoundMixer.ViewModels
                     {
                         // Don't want to accidentally restart a sound
                         soundControl.PlayOrStop();
+                        foundOne = true;
                     }
                 }
 
                 // Also update the icon
-                IsPlayingAll = true;
+                if (foundOne) IsPlayingAll = true;
             }
         }
 
@@ -765,9 +767,21 @@ namespace SoundMixer.ViewModels
             }
             else
             {
-
                 PlayAllSounds();
             }
+        }
+
+        public void ReportABug_Click(object sender, RoutedEventArgs e)
+        {
+            string user = "juanferrer";
+            string repo = "sound-mixer";
+            string body = System.Web.HttpUtility.UrlEncode("## Steps to reproduce:\n1. Step 1\n2. Step 2\n3. Step 3\n\n## Actual behaviour\n\n\n## Expected behaviour:\n\n\n## Other details:");
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = $"https://github.com/{user}/{repo}/issues/new?body={body}",
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
         }
 
         public void About_Click(object sender, RoutedEventArgs e)

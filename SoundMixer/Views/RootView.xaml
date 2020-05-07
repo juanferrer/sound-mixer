@@ -37,8 +37,7 @@
                 <MenuItem Header="Add _Sound" InputGestureText="Ctrl+Alt+S" Click="{s:Action AddSound_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="_View Help" IsEnabled="False"/>
-                <MenuItem Header="_Report a Bug" IsEnabled="False"/>
+                <MenuItem Header="_Report a Bug" Click="{s:Action ReportABug_Click}"/>
                 <Separator/>
                 <MenuItem Header="_About" Click="{s:Action About_Click}"/>
             </MenuItem>
