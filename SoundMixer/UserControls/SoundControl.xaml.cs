@@ -165,5 +165,10 @@ namespace SoundMixer.UserControls
         {
             return new PointHitTestResult(this, hitTestParameters.HitPoint);
         }
+
+        private void MuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            SoundPropertyModel.IsMuted = (sender as System.Windows.Controls.Primitives.ToggleButton).IsChecked == true;
+        }
     }
 }

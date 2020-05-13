@@ -37,6 +37,15 @@ namespace SoundMixer.Models
         [JsonProperty]
         private Guid guid;
 
+        [JsonProperty]
+        private bool isMuted;
+
+        [JsonProperty]
+        private bool isSolo;
+
+        [JsonProperty]
+        private bool isSingle;
+
 
         public string Name
         {
@@ -98,6 +107,18 @@ namespace SoundMixer.Models
             private set { this.SetAndNotify(ref this.guid, value); }
         }
 
+        public bool IsMuted
+        {
+            get { return this.isMuted; }
+            set { this.SetAndNotify(ref this.isMuted, value); }
+        }
+
+        public bool IsSolo
+        {
+            get { return this.isSolo; }
+            set { this.SetAndNotify(ref this.isSolo, value); }
+        }
+
         public SoundPropertyModel(string name, double volume, Guid guid)
         {
             Name = name;
@@ -107,6 +128,8 @@ namespace SoundMixer.Models
             IsDelayed = false;
             MinDelay = 0;
             MaxDelay = 60000; // A minute
+            IsMuted = false;
+            IsSolo = false;
         }
     }
 }

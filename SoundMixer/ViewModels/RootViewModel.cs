@@ -471,13 +471,42 @@ namespace SoundMixer.ViewModels
                 var soundStack = (View as Views.RootView).soundStack;
                 List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
-                foreach (var soundControl in soundControls)
+                List<int> soloIndices = new List<int>();
+
+                // First check if there's any solo
+                for (int i = 0; i < soundControls.Count; ++i)
                 {
-                    if (!soundControl.IsPlaying && soundControl.SoundPropertyModel.IsLoop)
+                    if (soundControls[i].SoundPropertyModel.IsSolo)
                     {
-                        // Don't want to accidentally restart a sound
-                        soundControl.PlayOrStop();
-                        foundOne = true;
+                        soloIndices.Add(i);
+                    }
+                }
+
+                // Now, if a solo track was found, play only them. Otherwise, play all
+                if (soloIndices.Count > 0)
+                {
+
+                    foreach (int index in soloIndices)
+                    {
+                        if (!soundControls[index].IsPlaying && soundControls[index].SoundPropertyModel.IsLoop)
+                        {
+                            soundControls[index].PlayOrStop();
+                            foundOne = true;
+                        }
+                    }
+                }
+                else
+                {
+
+
+                    foreach (var soundControl in soundControls)
+                    {
+                        if (!soundControl.IsPlaying && soundControl.SoundPropertyModel.IsLoop)
+                        {
+                            // Don't want to accidentally restart a sound
+                            soundControl.PlayOrStop();
+                            foundOne = true;
+                        }
                     }
                 }
 
@@ -793,6 +822,11 @@ namespace SoundMixer.ViewModels
         {
             var aboutViewModel = new AboutViewModel();
             this.windowManager.ShowDialog(aboutViewModel);
+        }
+
+        public void SoloButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.windowManager.ShowMessageBox("Text");
         }
 
         #endregion
