@@ -19,7 +19,7 @@
         <ToggleButton Name="muteButton" Content="M" HorizontalAlignment="Left" Width="20" Height="20" VerticalAlignment="Top" Margin="75,60,0,0"
                       IsChecked="{Binding SoundPropertyModel.IsMuted, RelativeSource={RelativeSource AncestorType=UserControl}}" Click="MuteButton_Click"/>
         <ToggleButton Name="soloButton" Content="S" HorizontalAlignment="Left" Width="20" Height="20" VerticalAlignment="Top" Margin="95,60,0,0"
-                      IsChecked="{Binding SoundPropertyModel.IsSolo, RelativeSource={RelativeSource AncestorType=UserControl}}" IsEnabled="False"/>
+                      IsChecked="{Binding SoundPropertyModel.IsSolo, RelativeSource={RelativeSource AncestorType=UserControl}}" Click="SoloButton_Click"/>
         <MediaElement Name="player" Source="{Binding SoundPropertyModel.Sound.FilePath, RelativeSource={RelativeSource AncestorType=UserControl}}"
                       IsMuted="{Binding SoundPropertyModel.IsMuted, RelativeSource={RelativeSource AncestorType=UserControl}}"
                       VerticalAlignment="Bottom" Height="10" MediaEnded="SoundMediaElement_MediaEnded" LoadedBehavior="Manual" UnloadedBehavior="Manual"/>

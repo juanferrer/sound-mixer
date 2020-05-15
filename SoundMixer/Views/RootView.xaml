@@ -10,7 +10,8 @@
         xmlns:custom="clr-namespace:SoundMixer.UserControls"
         mc:Ignorable="d"
         Title="Sound Mixer" Height="720" Width="1024"
-        DataContext="RootViewModel">
+        DataContext="RootViewModel"
+        custom:SoundControl.SoloMuteClick="{s:Action SoloMuteButton_Click}">
 
     <Window.InputBindings>
         <KeyBinding Key="N" Modifiers="Ctrl" Command="{s:Action NewWorkspaceFile}"/>

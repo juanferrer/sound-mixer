@@ -471,42 +471,13 @@ namespace SoundMixer.ViewModels
                 var soundStack = (View as Views.RootView).soundStack;
                 List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
-                List<int> soloIndices = new List<int>();
-
-                // First check if there's any solo
-                for (int i = 0; i < soundControls.Count; ++i)
+                foreach (var soundControl in soundControls)
                 {
-                    if (soundControls[i].SoundPropertyModel.IsSolo)
+                    if (!soundControl.IsPlaying && soundControl.SoundPropertyModel.IsLoop)
                     {
-                        soloIndices.Add(i);
-                    }
-                }
-
-                // Now, if a solo track was found, play only them. Otherwise, play all
-                if (soloIndices.Count > 0)
-                {
-
-                    foreach (int index in soloIndices)
-                    {
-                        if (!soundControls[index].IsPlaying && soundControls[index].SoundPropertyModel.IsLoop)
-                        {
-                            soundControls[index].PlayOrStop();
-                            foundOne = true;
-                        }
-                    }
-                }
-                else
-                {
-
-
-                    foreach (var soundControl in soundControls)
-                    {
-                        if (!soundControl.IsPlaying && soundControl.SoundPropertyModel.IsLoop)
-                        {
-                            // Don't want to accidentally restart a sound
-                            soundControl.PlayOrStop();
-                            foundOne = true;
-                        }
+                        // Don't want to accidentally restart a sound
+                        soundControl.PlayOrStop();
+                        foundOne = true;
                     }
                 }
 
@@ -824,9 +795,43 @@ namespace SoundMixer.ViewModels
             this.windowManager.ShowDialog(aboutViewModel);
         }
 
-        public void SoloButton_Click(object sender, RoutedEventArgs e)
+        public void SoloMuteButton_Click(object sender, RoutedEventArgs e)
         {
-            this.windowManager.ShowMessageBox("Text");
+            var soundStack = (View as Views.RootView).soundStack;
+            List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
+
+            bool foundOne = false;
+
+            // First go through all sound controls and check if any is solo
+            foreach (var soundControl in soundControls)
+            {
+                if (soundControl.SoundPropertyModel.IsSolo)
+                {
+                    foundOne = true;
+                    break;
+                }
+            }
+
+            if (foundOne)
+            {
+                // There is at least one solo
+                foreach (var soundControl in soundControls)
+                {
+                    bool shouldPlay = soundControl.SoundPropertyModel.IsSolo && !soundControl.SoundPropertyModel.IsMuted;
+                    soundControl.SetPlayerMute(!shouldPlay); // Opposite because the function sets the IsMuted value
+                }
+
+            }
+            else
+            {
+                // No solo found, rely on mute only
+                foreach (var soundControl in soundControls)
+                {
+                    soundControl.SetPlayerMute(soundControl.SoundPropertyModel.IsMuted);
+                }
+            }
+
+            e.Handled = true;
         }
 
         #endregion

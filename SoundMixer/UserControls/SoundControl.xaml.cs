@@ -16,6 +16,15 @@ namespace SoundMixer.UserControls
     /// </summary>
     public partial class SoundControl : UserControl
     {
+        // Custom event
+        public static readonly RoutedEvent SoloMuteClickEvent = EventManager.RegisterRoutedEvent("SoloMuteClick", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(SoundControl));
+
+        public event RoutedEventHandler SoloMuteClick
+        {
+            add { AddHandler(SoloMuteClickEvent, value); }
+            remove { RemoveHandler(SoloMuteClickEvent, value); }
+        }
+
         private static Color missingSoundColor = Color.FromRgb(255, 0, 0);
 
         private string resourcesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
@@ -130,6 +139,11 @@ namespace SoundMixer.UserControls
             }
         }
 
+        public void SetPlayerMute(bool state)
+        {
+            player.IsMuted = state;
+        }
+
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             PlayOrStop();
@@ -169,6 +183,18 @@ namespace SoundMixer.UserControls
         private void MuteButton_Click(object sender, RoutedEventArgs e)
         {
             SoundPropertyModel.IsMuted = (sender as System.Windows.Controls.Primitives.ToggleButton).IsChecked == true;
+
+            var newEventArgs = new RoutedEventArgs(SoloMuteClickEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void SoloButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Sets this sound as Solo and raises the event for RootViewModel to control what happens to the other sound controls
+            SoundPropertyModel.IsSolo = (sender as System.Windows.Controls.Primitives.ToggleButton).IsChecked == true;
+
+            var newEventArgs = new RoutedEventArgs(SoloMuteClickEvent);
+            RaiseEvent(newEventArgs);
         }
     }
 }
