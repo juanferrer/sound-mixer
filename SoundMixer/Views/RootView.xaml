@@ -21,6 +21,8 @@
         <KeyBinding Key="C" Modifiers="Ctrl+Alt" Command="{s:Action AddSceneButton}"/>
         <KeyBinding Key="M" Modifiers="Ctrl+Alt" Command="{s:Action AddMoodButton}"/>
         <KeyBinding Key="S" Modifiers="Ctrl+Alt" Command="{s:Action AddSoundButton}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl+Alt+Shift" Command="{s:Action AddSoundFromYoutubeButton}"/>
+        <KeyBinding Key="Space" Command="{s:Action PlayOrStopAllSoundsButton}"/>
     </Window.InputBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top" Name="menu" Background="White" VerticalAlignment="Top">
@@ -36,6 +38,7 @@
                 <MenuItem Header="Add S_cene" InputGestureText="Ctrl+Alt+C" Click="{s:Action AddScene_Click}"/>
                 <MenuItem Header="Add _Mood" InputGestureText="Ctrl+Alt+M" Click="{s:Action AddMood_Click}" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBooleanConverter}}"/>
                 <MenuItem Header="Add _Sound" InputGestureText="Ctrl+Alt+S" Click="{s:Action AddSound_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
+                <MenuItem Header="Add Sound from _YouTube" InputGestureText="Ctrl+Alt++Shift+S" Click="{s:Action AddSoundFromYoutube_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_Report a Bug" Click="{s:Action ReportABug_Click}"/>
@@ -44,6 +47,21 @@
             </MenuItem>
         </Menu>
         <Separator DockPanel.Dock="Top"/>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem Height="22" Width="22">
+                <Image Visibility="{Binding ShowLoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding Status, Converter={StaticResource ProgramStatusToMessageConverter}}"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right" Visibility="{Binding IsPlayingAll, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock>
+                    <Run Text="{Binding SelectedScene.Name}"/>
+                    <Run Text=" - "/>
+                    <Run Text="{Binding SelectedMood.Name}"/>
+                </TextBlock>
+            </StatusBarItem>
+        </StatusBar>
         <Grid Name="mainGrid" Background="#40000000" Focusable="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

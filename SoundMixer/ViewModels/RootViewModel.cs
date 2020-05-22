@@ -1,25 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.Win32;
 
 using SoundMixer.Models;
+using SoundMixer.Miscellanea;
 using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
 using Stylet;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace SoundMixer.ViewModels
 {
-    public class RootViewModel : Screen
+    public class RootViewModel : Screen, IHandle<AddedSoundFromYouTube>, IHandle<AddingSoundFromYouTube>
     {
+
         private IWindowManager windowManager;
+        private IEventAggregator eventAggregator;
 
         private static double defaultVolume = 0.5;
         private bool isDirty = false;
@@ -59,10 +63,26 @@ namespace SoundMixer.ViewModels
             set { this.SetAndNotify(ref this.isPlayingAll, value); }
         }
 
+        private Enums.ProgramStatus status;
+        public Enums.ProgramStatus Status
+        {
+            get { return this.status; }
+            set { this.SetAndNotify(ref this.status, value); }
+        }
 
-        public RootViewModel(IWindowManager windowManager)
+        public bool? ShowLoadingImage
+        {
+            get { return this.status == Enums.ProgramStatus.Loading; }
+        }
+
+
+
+        public RootViewModel(IWindowManager windowManager, IEventAggregator eventAggregator)
         {
             this.windowManager = windowManager;
+            this.eventAggregator = eventAggregator;
+
+            eventAggregator.Subscribe(this);
 
             Workspace = new WorkspaceModel();
 
@@ -75,6 +95,8 @@ namespace SoundMixer.ViewModels
             selectedSceneButtonStyle = styles["SceneButtonSelected"] as Style;
             defaultMoodButtonStyle = styles["MoodButton"] as Style;
             selectedMoodButtonStyle = styles["MoodButtonSelected"] as Style;
+
+            Status = Enums.ProgramStatus.Ready;
         }
 
         /// <summary>
@@ -463,6 +485,18 @@ namespace SoundMixer.ViewModels
             return null;
         }
 
+        public void PlayOrStopAllSoundsButton()
+        {
+            if (IsPlayingAll)
+            {
+                StopAllSounds();
+            }
+            else
+            {
+                PlayAllSounds();
+            }
+        }
+
         public void PlayAllSounds()
         {
             if (View != null)
@@ -645,6 +679,22 @@ namespace SoundMixer.ViewModels
             }
         }
 
+        public void AddSoundFromYoutubeButton()
+        {
+            if (SelectedMood != null)
+            {
+                // Adding from youtube, so need to ask for a link
+                this.windowManager.ShowDialog(new YouTubeDownloadViewModel(eventAggregator));
+
+                string downloadedFilePath = "";
+
+                if (File.Exists(downloadedFilePath))
+                {
+                    AddSound(downloadedFilePath);
+                }
+            }
+        }
+
         #region EventHandlers
 
         public void New_Click(object sender, RoutedEventArgs e)
@@ -679,7 +729,20 @@ namespace SoundMixer.ViewModels
 
         public void AddSound_Click(object sender, RoutedEventArgs e)
         {
-            AddSoundButton();
+            // Shift was pressed during the click
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                AddSoundFromYoutubeButton();
+            }
+            else
+            {
+                AddSoundButton();
+            }
+        }
+
+        public void AddSoundFromYouTube_Click(object sender, RoutedEventArgs e)
+        {
+            AddSoundFromYoutubeButton();
         }
 
         public void SelectScene_LeftMouseUp(object sender, RoutedEventArgs e)
@@ -763,14 +826,7 @@ namespace SoundMixer.ViewModels
 
         public void PlayAllButton_Click(object sender, RoutedEventArgs e)
         {
-            if (IsPlayingAll)
-            {
-                StopAllSounds();
-            }
-            else
-            {
-                PlayAllSounds();
-            }
+            PlayOrStopAllSoundsButton();
         }
 
         public void ReportABug_Click(object sender, RoutedEventArgs e)
@@ -832,6 +888,21 @@ namespace SoundMixer.ViewModels
             }
 
             e.Handled = true;
+        }
+
+        public void Handle(AddedSoundFromYouTube e)
+        {
+            // Get sound path
+            string path = e.Args.SoundPath;
+            AddSound(path);
+
+            Status = Enums.ProgramStatus.Ready;
+        }
+
+        public void Handle(AddingSoundFromYouTube e)
+        {
+            // Start a "loading dialog"
+            Status = Enums.ProgramStatus.Loading;
         }
 
         #endregion

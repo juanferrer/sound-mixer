@@ -17,6 +17,7 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <converters:ProgramStatusToMessageConverter x:Key="ProgramStatusToMessageConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
