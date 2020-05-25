@@ -13,7 +13,7 @@
         </Button>
         <Slider Name="volumeSlider" Margin="65,0,10,0" VerticalAlignment="Center" Value="{Binding SoundPropertyModel.Volume, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
                 Maximum="1" ValueChanged="VolumeSlider_ValueChanged" SmallChange="0.01" LargeChange="0.05"/>
-        <Image Source="../Resources/loop.png" Width="24" Height="24"
+        <Image Source="/Resources/loop.png" Width="24" Height="24"
                Visibility="{Binding SoundPropertyModel.IsLoop, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}"
                HorizontalAlignment="Left" VerticalAlignment="Top" Margin="48,15,0,0" />
         <ToggleButton Name="muteButton" Content="M" HorizontalAlignment="Left" Width="20" Height="20" VerticalAlignment="Top" Margin="75,60,0,0"

@@ -67,7 +67,10 @@ namespace SoundMixer.ViewModels
         public Enums.ProgramStatus Status
         {
             get { return this.status; }
-            set { this.SetAndNotify(ref this.status, value); }
+            set {
+                this.SetAndNotify(ref this.status, value);
+                this.NotifyOfPropertyChange("ShowLoadingImage");
+            }
         }
 
         public bool? ShowLoadingImage

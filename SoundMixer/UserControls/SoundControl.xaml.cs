@@ -57,6 +57,7 @@ namespace SoundMixer.UserControls
         private void UpdatePlayer()
         {
             player.Volume = volumeSlider.Value;
+
         }
 
         public void Play()

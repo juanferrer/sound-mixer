@@ -42,10 +42,10 @@
     <Style x:Key="PlayButtonImage" TargetType="Image">
         <Style.Triggers>
             <DataTrigger Binding="{Binding}" Value="True">
-                <Setter Property="Source" Value="./Resources/stop.png"/>
+                <Setter Property="Source" Value="/Resources/stop.png"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding}" Value="False">
-                <Setter Property="Source" Value="./Resources/play.png"/>
+                <Setter Property="Source" Value="/Resources/play.png"/>
             </DataTrigger>
         </Style.Triggers>
     </Style>
