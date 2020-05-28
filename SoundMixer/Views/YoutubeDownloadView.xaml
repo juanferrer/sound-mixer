@@ -13,7 +13,7 @@
         <TextBox Height="25" Margin="15,41,15,0" VerticalAlignment="Top" Text="{Binding VideoURL, Mode=TwoWay}" TextChanged="{s:Action VideoURL_TextChanged}"/>
         <Label Content="Download path" VerticalAlignment="Top" Margin="10,71,10,0"/>
         <UserControls:BrowseControl Text="Browse..." FilePath="{Binding DownloadPath, Mode=TwoWay}" VerticalAlignment="Top" Margin="15,102,15,0"
-                                    DialogType="Save" DialogFilter="Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (*.*)|*.*"/>
+                                    DialogType="Save" DialogFilter="Sound files (*.mp3;*.wav)|*.mp3;*.wav|All files (*.*)|*.*"/>
         <Button Content="Download" VerticalAlignment="Bottom" Width="100" HorizontalAlignment="Center" Margin="0,0,110,10" Click="{s:Action DownloadButton_Clicked}"/>
         <Button Content="Cancel" VerticalAlignment="Bottom" Width="100" HorizontalAlignment="Center" Margin="110,0,0,10" Click="{s:Action CancelButton_Clicked}"/>
     </Grid>

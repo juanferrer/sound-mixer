@@ -17,7 +17,7 @@
         <StackPanel Grid.Row="1" Margin="5">
             <Label Content="Current file:"/>
             <custom:BrowseControl Text="Browse..." FilePath="{Binding SoundPropertyModel.Sound.FilePath, Mode=TwoWay}" Margin="5,0"
-                                  DialogType="Open" DialogFilter="Sound files (*.wav;*.mp3)|*.wav;*.mp3|All files (*.*)|*.*"/>
+                                  DialogType="Open" DialogFilter="Sound files (*.mp3;*.wav)|*.mp3;*.wav|All files (*.*)|*.*"/>
             <CheckBox Content="Loop" IsChecked="{Binding SoundPropertyModel.IsLoop, Mode=TwoWay}" Margin="0,7"/>
             <GroupBox Padding="7">
                 <GroupBox.Header>

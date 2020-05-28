@@ -54,17 +54,20 @@ namespace SoundMixer.ViewModels
                 downloadPath = path;
             }
 
+            string targetFormat = Path.GetExtension(downloadPath).Replace(".", "");
+            string sourceFormat = "mp4";
+
             using (Process downloadProcess = new Process())
             {
                 downloadProcess.StartInfo.UseShellExecute = false;
                 downloadProcess.StartInfo.FileName = "youtube-dl.exe";
-                downloadProcess.StartInfo.Arguments = $"-x --audio-format \"mp3\" -o \"{downloadPath.Replace("mp3", "mp4")}\" {url}";
+                downloadProcess.StartInfo.Arguments = $"-x --audio-format \"{targetFormat}\" -o \"{downloadPath.Replace(targetFormat, sourceFormat)}\" {url}";
                 downloadProcess.StartInfo.CreateNoWindow = true;
                 downloadProcess.Start();
             }
 
             // The downloaded file also got converted to mp3, so we need to fix the extension
-            string convertedPath = Path.Combine(Path.GetDirectoryName(downloadPath), Path.GetFileNameWithoutExtension(downloadPath)) + ".mp3";
+            string convertedPath = Path.Combine(Path.GetDirectoryName(downloadPath), Path.GetFileNameWithoutExtension(downloadPath)) + "." + targetFormat;
 
             return convertedPath;
         }
