@@ -67,7 +67,8 @@ namespace SoundMixer.ViewModels
         public Enums.ProgramStatus Status
         {
             get { return this.status; }
-            set {
+            set
+            {
                 this.SetAndNotify(ref this.status, value);
                 this.NotifyOfPropertyChange("ShowLoadingImage");
             }
@@ -458,15 +459,18 @@ namespace SoundMixer.ViewModels
             // to the GUID
             foreach (var scene in Workspace.Scenes)
             {
-                for (int i = 0; i < scene.Moods[0].SoundProperties.Count; ++i)
+                if (scene.Moods.Count > 0)
                 {
-                    SoundModel sound = FindSoundFromGuid(scene.Moods[0].SoundProperties[i].GUID);
-
-                    // Since all moods contain the same sounds, we only need to find the matching sound once
-                    foreach (var mood in scene.Moods)
+                    for (int i = 0; i < scene.Moods[0]?.SoundProperties.Count; ++i)
                     {
-                        mood.SoundProperties[i].Sound = sound;
-                        mood.SoundProperties[i].Name = sound.Name;
+                        SoundModel sound = FindSoundFromGuid(scene.Moods[0].SoundProperties[i].GUID);
+
+                        // Since all moods contain the same sounds, we only need to find the matching sound once
+                        foreach (var mood in scene.Moods)
+                        {
+                            mood.SoundProperties[i].Sound = sound;
+                            mood.SoundProperties[i].Name = sound.Name;
+                        }
                     }
                 }
             }
