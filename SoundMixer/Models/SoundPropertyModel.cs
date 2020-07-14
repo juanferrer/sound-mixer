@@ -43,10 +43,6 @@ namespace SoundMixer.Models
         [JsonProperty]
         private bool isSolo;
 
-        [JsonProperty]
-        private bool isSingle;
-
-
         public string Name
         {
             get { return this.name; }

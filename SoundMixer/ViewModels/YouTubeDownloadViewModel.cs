@@ -15,7 +15,7 @@ namespace SoundMixer.ViewModels
 {
     class YouTubeDownloadViewModel : Screen
     {
-        private IEventAggregator eventAggregator;
+        readonly private IEventAggregator eventAggregator;
 
         private string tempPath;
         private string tempURL;
@@ -131,7 +131,7 @@ namespace SoundMixer.ViewModels
                         }
                         break;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // Will wait a bit more
                         System.Threading.Thread.Sleep(1000);

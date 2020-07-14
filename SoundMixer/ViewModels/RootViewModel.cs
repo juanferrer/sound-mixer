@@ -22,16 +22,16 @@ namespace SoundMixer.ViewModels
     public class RootViewModel : Screen, IHandle<AddedSoundFromYouTube>, IHandle<AddingSoundFromYouTube>
     {
 
-        private IWindowManager windowManager;
-        private IEventAggregator eventAggregator;
+        readonly private IWindowManager windowManager;
+        readonly private IEventAggregator eventAggregator;
 
-        private static double defaultVolume = 0.5;
+        readonly private static double defaultVolume = 0.5;
         private bool isDirty = false;
-        private ResourceDictionary styles;
-        private Style defaultSceneButtonStyle;
-        private Style selectedSceneButtonStyle;
-        private Style defaultMoodButtonStyle;
-        private Style selectedMoodButtonStyle;
+        readonly private ResourceDictionary styles;
+        readonly private Style defaultSceneButtonStyle;
+        readonly private Style selectedSceneButtonStyle;
+        readonly private Style defaultMoodButtonStyle;
+        readonly private Style selectedMoodButtonStyle;
 
         private string activeFilePath;
 
@@ -230,13 +230,15 @@ namespace SoundMixer.ViewModels
                 {
                     // Clone the sound
                     string newName = GetUniqueNameFromString(soundPropertyModel.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
-                    var newSoundPropertyModel = new SoundPropertyModel(newName, soundPropertyModel.Volume, soundPropertyModel.GUID);
-                    newSoundPropertyModel.IsDelayed = soundPropertyModel.IsDelayed;
-                    newSoundPropertyModel.IsLoop = soundPropertyModel.IsLoop;
-                    newSoundPropertyModel.UseRandomDelay = soundPropertyModel.UseRandomDelay;
-                    newSoundPropertyModel.DelayTime = soundPropertyModel.DelayTime;
-                    newSoundPropertyModel.MinDelay = soundPropertyModel.MinDelay;
-                    newSoundPropertyModel.MaxDelay = soundPropertyModel.MaxDelay;
+                    var newSoundPropertyModel = new SoundPropertyModel(newName, soundPropertyModel.Volume, soundPropertyModel.GUID)
+                    {
+                        IsDelayed = soundPropertyModel.IsDelayed,
+                        IsLoop = soundPropertyModel.IsLoop,
+                        UseRandomDelay = soundPropertyModel.UseRandomDelay,
+                        DelayTime = soundPropertyModel.DelayTime,
+                        MinDelay = soundPropertyModel.MinDelay,
+                        MaxDelay = soundPropertyModel.MaxDelay
+                    };
                     mood.SoundProperties.Add(newSoundPropertyModel);
                 }
 
@@ -599,8 +601,10 @@ namespace SoundMixer.ViewModels
                 }
             }
 
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
+            };
             if (openFileDialog.ShowDialog() == true)
             {
                 string path = openFileDialog.FileName;
@@ -617,8 +621,10 @@ namespace SoundMixer.ViewModels
             // We should save over the previously used file, if any
             if (string.IsNullOrEmpty(activeFilePath))
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
+                };
                 if ((bool)saveFileDialog.ShowDialog())
                 {
                     activeFilePath = saveFileDialog.FileName;
@@ -635,8 +641,10 @@ namespace SoundMixer.ViewModels
 
         public void SaveWorkspaceFileAs()
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*";
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
+            };
             if ((bool)saveFileDialog.ShowDialog())
             {
                 activeFilePath = saveFileDialog.FileName;
