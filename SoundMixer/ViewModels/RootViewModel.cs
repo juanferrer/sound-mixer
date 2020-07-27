@@ -83,6 +83,8 @@ namespace SoundMixer.ViewModels
 
         public RootViewModel(IWindowManager windowManager, IEventAggregator eventAggregator)
         {
+            Unosquare.FFME.Library.FFmpegDirectory = @"Resources\ffmpeg";
+
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
 

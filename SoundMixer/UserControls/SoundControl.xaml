@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
              xmlns:local="clr-namespace:SoundMixer.UserControls"
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="500">
@@ -19,9 +20,8 @@
         <ToggleButton Name="muteButton" Content="M" HorizontalAlignment="Left" Width="20" Height="20" VerticalAlignment="Top" Margin="75,60,0,0"
                       IsChecked="{Binding SoundPropertyModel.IsMuted, RelativeSource={RelativeSource AncestorType=UserControl}}" Click="MuteButton_Click"/>
         <ToggleButton Name="soloButton" Content="S" HorizontalAlignment="Left" Width="20" Height="20" VerticalAlignment="Top" Margin="95,60,0,0"
-                      IsChecked="{Binding SoundPropertyModel.IsSolo, RelativeSource={RelativeSource AncestorType=UserControl}}" Click="SoloButton_Click"/>
-        <MediaElement Name="player" Source="{Binding SoundPropertyModel.Sound.FilePath, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                      IsMuted="{Binding SoundPropertyModel.IsMuted, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      IsChecked="{Binding SoundPropertyModel.IsSolo, RelativeSource={RelativeSource AncestorType=UserControl}}" Click="SoloButton_Click" Loaded="SoundControl_Loaded"/>
+        <ffme:MediaElement Name="player" IsMuted="{Binding SoundPropertyModel.IsMuted, RelativeSource={RelativeSource AncestorType=UserControl}}"
                       VerticalAlignment="Bottom" Height="10" MediaEnded="SoundMediaElement_MediaEnded" LoadedBehavior="Manual" UnloadedBehavior="Manual"/>
     </Grid>
 </UserControl>

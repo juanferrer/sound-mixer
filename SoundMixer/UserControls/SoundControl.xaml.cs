@@ -31,6 +31,7 @@ namespace SoundMixer.UserControls
 
         private Random rng;
         private CancellationTokenSource delayedPlayCancellationTokenSource;
+        private bool isPlayQueried;
 
         public SoundPropertyModel SoundPropertyModel
         {
@@ -57,11 +58,15 @@ namespace SoundMixer.UserControls
         private void UpdatePlayer()
         {
             player.Volume = volumeSlider.Value;
-
         }
 
         public void Play()
         {
+            if (!player.IsOpen)
+            {
+                isPlayQueried = true;
+                return;
+            }
             UpdatePlayer();
             player.Position = TimeSpan.Zero;
             player.Play();
@@ -150,7 +155,7 @@ namespace SoundMixer.UserControls
             PlayOrStop();
         }
 
-        private void SoundMediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        private void SoundMediaElement_MediaEnded(object sender, EventArgs e)
         {
             // The sound may have to loop
             if (SoundPropertyModel.IsLoop)
@@ -196,6 +201,29 @@ namespace SoundMixer.UserControls
 
             var newEventArgs = new RoutedEventArgs(SoloMuteClickEvent);
             RaiseEvent(newEventArgs);
+        }
+
+        private async void SoundControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!player.IsOpen || player.Source.AbsoluteUri != SoundPropertyModel.Sound.FilePath)
+            {
+                if (SoundPropertyModel.IsMuted)
+                {
+                    // No need to wait to load, do it asynchronously
+                    _ = player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
+                    Play();
+                }
+                else
+                {
+
+                    await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
+                    if (isPlayQueried)
+                    {
+                        isPlayQueried = false;
+                        Play();
+                    }
+                }
+            }
         }
     }
 }
