@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 
 using SoundMixer.Models;
+using Unosquare.FFME.Common;
 
 namespace SoundMixer.UserControls
 {
@@ -45,8 +46,18 @@ namespace SoundMixer.UserControls
             set { SetValue(IsPlayingProperty, value); }
         }
 
+        public DirectSoundDeviceInfo OutputDevice
+        {
+            get { return (DirectSoundDeviceInfo)GetValue(OutputDeviceProperty); }
+            set
+            {
+                SetValue(OutputDeviceProperty, value);
+            }
+        }
+
         public static readonly DependencyProperty SoundPropertyModelProperty = DependencyProperty.Register("SoundPropertyModel", typeof(SoundPropertyModel), typeof(SoundControl), null);
         public static readonly DependencyProperty IsPlayingProperty = DependencyProperty.Register("IsPlaying", typeof(bool), typeof(SoundControl), null);
+        public static readonly DependencyProperty OutputDeviceProperty = DependencyProperty.Register("OutputDevice", typeof(DirectSoundDeviceInfo), typeof(SoundControl), null);
 
         public SoundControl()
         {
@@ -150,6 +161,13 @@ namespace SoundMixer.UserControls
             player.IsMuted = state;
         }
 
+        public void SetOutputDevice(DirectSoundDeviceInfo outputDevice)
+        {
+            player.RendererOptions.DirectSoundDevice = outputDevice;
+        }
+
+        #region Event Handlers
+
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             PlayOrStop();
@@ -207,6 +225,7 @@ namespace SoundMixer.UserControls
         {
             if (!player.IsOpen || player.Source.AbsoluteUri != SoundPropertyModel.Sound.FilePath)
             {
+                player.RendererOptions.DirectSoundDevice = OutputDevice;
                 if (SoundPropertyModel.IsMuted)
                 {
                     // No need to wait to load, do it asynchronously
@@ -225,5 +244,7 @@ namespace SoundMixer.UserControls
                 }
             }
         }
+
+        #endregion
     }
 }

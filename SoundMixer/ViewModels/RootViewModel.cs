@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,6 +15,7 @@ using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
 using Stylet;
+using Unosquare.FFME.Common;
 
 namespace SoundMixer.ViewModels
 {
@@ -56,6 +56,20 @@ namespace SoundMixer.ViewModels
             set { this.SetAndNotify(ref this.selectedMood, value); }
         }
 
+        private DirectSoundDeviceInfo selectedOutputDevice;
+        public DirectSoundDeviceInfo SelectedOutputDevice
+        {
+            get { return this.selectedOutputDevice; }
+            set { this.SetAndNotify(ref this.selectedOutputDevice, value); }
+        }
+
+        private BindableCollection<DirectSoundDeviceInfo> outputDevices;
+        public BindableCollection<DirectSoundDeviceInfo> OutputDevices
+        {
+            get { return this.outputDevices; }
+            set { this.SetAndNotify(ref this.outputDevices, value); }
+        }
+
         private bool isPlayingAll;
         public bool IsPlayingAll
         {
@@ -79,8 +93,6 @@ namespace SoundMixer.ViewModels
             get { return this.status == Enums.ProgramStatus.Loading; }
         }
 
-
-
         public RootViewModel(IWindowManager windowManager, IEventAggregator eventAggregator)
         {
             Unosquare.FFME.Library.FFmpegDirectory = @"Resources\ffmpeg";
@@ -103,6 +115,10 @@ namespace SoundMixer.ViewModels
             selectedMoodButtonStyle = styles["MoodButtonSelected"] as Style;
 
             Status = Enums.ProgramStatus.Ready;
+
+            outputDevices = new BindableCollection<DirectSoundDeviceInfo>(Unosquare.FFME.Library.EnumerateDirectSoundDevices());
+
+            SelectedOutputDevice = outputDevices.ElementAt(3);
         }
 
         /// <summary>
@@ -712,6 +728,32 @@ namespace SoundMixer.ViewModels
             }
         }
 
+        public void OpenPreferences()
+        {
+            var settingsModel = new SettingsModel()
+            {
+                SelectedOutputDevice = this.SelectedOutputDevice,
+                AvailableOutputDevices = this.OutputDevices
+            };
+            this.windowManager.ShowDialog(new SettingsViewModel(settingsModel));
+            SelectedOutputDevice = settingsModel.SelectedOutputDevice;
+
+            // Also need to update all sounds to use the new SelectedOutputDevice
+            UpdateOutputDeviceInSounds();
+        }
+
+        public void UpdateOutputDeviceInSounds()
+        {
+            var soundStack = (View as Views.RootView).soundStack;
+            List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
+
+            // First go through all sound controls and check if any is solo
+            foreach (var soundControl in soundControls)
+            {
+                soundControl.SetOutputDevice(SelectedOutputDevice);
+            }
+        }
+
         #region EventHandlers
 
         public void New_Click(object sender, RoutedEventArgs e)
@@ -760,6 +802,11 @@ namespace SoundMixer.ViewModels
         public void AddSoundFromYouTube_Click(object sender, RoutedEventArgs e)
         {
             AddSoundFromYoutubeButton();
+        }
+
+        public void Preferences_Click(object sender, RoutedEventArgs e)
+        {
+            OpenPreferences();
         }
 
         public void SelectScene_LeftMouseUp(object sender, RoutedEventArgs e)

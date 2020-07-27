@@ -38,7 +38,8 @@
                 <MenuItem Header="Add S_cene" InputGestureText="Ctrl+Alt+C" Click="{s:Action AddScene_Click}"/>
                 <MenuItem Header="Add _Mood" InputGestureText="Ctrl+Alt+M" Click="{s:Action AddMood_Click}" IsEnabled="{Binding SelectedScene, Converter={StaticResource ObjectToBooleanConverter}}"/>
                 <MenuItem Header="Add _Sound" InputGestureText="Ctrl+Alt+S" Click="{s:Action AddSound_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
-                <MenuItem Header="Add Sound from _YouTube" InputGestureText="Ctrl+Alt++Shift+S" Click="{s:Action AddSoundFromYoutube_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>
+                <!--<MenuItem Header="Add Sound from _YouTube" InputGestureText="Ctrl+Alt++Shift+S" Click="{s:Action AddSoundFromYoutube_Click}" IsEnabled="{Binding SelectedMood, Converter={StaticResource ObjectToBooleanConverter}}"/>-->
+                <MenuItem Header="_Preferences" Click="{s:Action Preferences_Click}"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_Report a Bug" Click="{s:Action ReportABug_Click}"/>
@@ -150,7 +151,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <custom:SoundControl SoundPropertyModel="{Binding Path=., Mode=TwoWay}">
+                            <custom:SoundControl SoundPropertyModel="{Binding Path=., Mode=TwoWay}" OutputDevice="{Binding ElementName=soundStack, Path=DataContext.SelectedOutputDevice}">
                                 <custom:SoundControl.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Edit" Click="{s:Action EditSoundControl_Click}"/>
