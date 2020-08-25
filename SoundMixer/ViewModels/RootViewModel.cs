@@ -62,9 +62,17 @@ namespace SoundMixer.ViewModels
             get { return this.selectedOutputDevice; }
             set { this.SetAndNotify(ref this.selectedOutputDevice, value); }
         }
+        /*private LegacyAudioDeviceInfo selectedOutputDevice;
+        public LegacyAudioDeviceInfo SelectedOutputDevice
+        {
+            get { return this.selectedOutputDevice; }
+            set { this.SetAndNotify(ref this.selectedOutputDevice, value); }
+        }*/
 
         private BindableCollection<DirectSoundDeviceInfo> outputDevices;
         public BindableCollection<DirectSoundDeviceInfo> OutputDevices
+        //private BindableCollection<LegacyAudioDeviceInfo> outputDevices;
+        //public BindableCollection<LegacyAudioDeviceInfo> OutputDevices
         {
             get { return this.outputDevices; }
             set { this.SetAndNotify(ref this.outputDevices, value); }
@@ -97,6 +105,8 @@ namespace SoundMixer.ViewModels
         {
             Unosquare.FFME.Library.FFmpegDirectory = @"Resources\ffmpeg";
 
+            Unosquare.FFME.Library.FFmpegLoadModeFlags = FFmpeg.AutoGen.FFmpegLoadMode.AudioOnly;
+
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
 
@@ -118,7 +128,7 @@ namespace SoundMixer.ViewModels
 
             outputDevices = new BindableCollection<DirectSoundDeviceInfo>(Unosquare.FFME.Library.EnumerateDirectSoundDevices());
 
-            SelectedOutputDevice = outputDevices.ElementAt(3);
+            SelectedOutputDevice = outputDevices.ElementAt(0);
         }
 
         /// <summary>
@@ -164,8 +174,7 @@ namespace SoundMixer.ViewModels
             {
                 if (Workspace.Scenes[i].Name == sceneName)
                 {
-                    string selectedSceneName = SelectedScene.Name; // Just in case we accidentally remove it
-                    Workspace.Scenes.RemoveAt(i);
+                    string selectedSceneName = SelectedScene.Name; // Just in case we are removing the selected scene
 
                     // Select a different scene and mood if we deleted the selected one
                     if (selectedSceneName == sceneName)
@@ -173,6 +182,8 @@ namespace SoundMixer.ViewModels
                         StopAllSounds();
                         SelectScene(0);
                     }
+
+                    Workspace.Scenes.RemoveAt(i);
 
                     isDirty = true;
                 }
@@ -211,7 +222,6 @@ namespace SoundMixer.ViewModels
             {
                 if (SelectedScene.Moods[i].Name == moodName)
                 {
-                    SelectedScene.Moods.RemoveAt(i);
 
                     // Select a different mood if we deleted the selected one
                     if (SelectedMood.Name == moodName)
@@ -219,6 +229,8 @@ namespace SoundMixer.ViewModels
                         StopAllSounds();
                         //SelectedMood = SelectedScene.Moods.Count > 0 ? SelectedScene.Moods[0] : null;
                     }
+
+                    SelectedScene.Moods.RemoveAt(i);
 
                     isDirty = true;
                 }

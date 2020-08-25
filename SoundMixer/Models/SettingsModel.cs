@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Newtonsoft.Json;
 using Stylet;
 using Unosquare.FFME.Common;
 

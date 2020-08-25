@@ -64,6 +64,7 @@ namespace SoundMixer.UserControls
             InitializeComponent();
 
             rng = new Random();
+            //player.RendererOptions.UseLegacyAudioOut = true;
         }
 
         private void UpdatePlayer()
@@ -204,9 +205,15 @@ namespace SoundMixer.UserControls
             return new PointHitTestResult(this, hitTestParameters.HitPoint);
         }
 
-        private void MuteButton_Click(object sender, RoutedEventArgs e)
+        private async void MuteButton_Click(object sender, RoutedEventArgs e)
         {
             SoundPropertyModel.IsMuted = (sender as System.Windows.Controls.Primitives.ToggleButton).IsChecked == true;
+
+            // If it's not muted anymore, we need to load the sound asynchronously
+            if (!SoundPropertyModel.IsMuted && !player.IsOpen)
+            {
+                await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
+            }
 
             var newEventArgs = new RoutedEventArgs(SoloMuteClickEvent);
             RaiseEvent(newEventArgs);
@@ -226,15 +233,8 @@ namespace SoundMixer.UserControls
             if (!player.IsOpen || player.Source.AbsoluteUri != SoundPropertyModel.Sound.FilePath)
             {
                 player.RendererOptions.DirectSoundDevice = OutputDevice;
-                if (SoundPropertyModel.IsMuted)
+                if (!SoundPropertyModel.IsMuted)
                 {
-                    // No need to wait to load, do it asynchronously
-                    _ = player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
-                    Play();
-                }
-                else
-                {
-
                     await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
                     if (isPlayQueried)
                     {
