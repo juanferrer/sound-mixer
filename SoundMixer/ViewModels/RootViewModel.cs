@@ -16,10 +16,12 @@ using SoundMixer.Extensions;
 using Newtonsoft.Json;
 using Stylet;
 using Unosquare.FFME.Common;
+using GongSolutions.Wpf.DragDrop;
+using SoundMixer.UserControls;
 
 namespace SoundMixer.ViewModels
 {
-    public class RootViewModel : Screen, IHandle<AddedSoundFromStream>, IHandle<AddingSoundFromStream>
+    public class RootViewModel : Screen, IHandle<AddedSoundFromStream>, IHandle<AddingSoundFromStream>, IDragSource, IDropTarget
     {
 
         readonly private IWindowManager windowManager;
@@ -251,7 +253,7 @@ namespace SoundMixer.ViewModels
                 tempName = "Video";
             }
             else
-            { 
+            {
                 tempName = Path.GetFileNameWithoutExtension(soundPath);
             }
 
@@ -989,6 +991,69 @@ namespace SoundMixer.ViewModels
         {
             // Start a "loading dialog"
             Status = Enums.ProgramStatus.Loading;
+        }
+
+        public void StartDrag(IDragInfo dragInfo)
+        {
+            if (dragInfo.SourceItem is SceneModel scene)
+            {
+                dragInfo.Effects = DragDropEffects.Move;
+                dragInfo.Data = scene;
+            }
+            else if (dragInfo.SourceItem is MoodModel mood)
+            {
+                dragInfo.Effects = DragDropEffects.Move;
+                dragInfo.Data = mood;
+            }
+            else if (dragInfo.SourceItem is SoundControl sound)
+            {
+                dragInfo.Effects = DragDropEffects.Move;
+                dragInfo.Data = sound;
+            }
+        }
+
+        public bool CanStartDrag(IDragInfo dragInfo)
+        {
+            return true;
+        }
+
+        public void Dropped(IDropInfo dropInfo)
+        { 
+            if ((dropInfo.Data is SceneModel && !(dropInfo.TargetItem is SceneModel)) ||
+                (dropInfo.Data is MoodModel && !(dropInfo.TargetItem is MoodModel)) ||
+                (dropInfo.Data is SoundPropertyModel && !(dropInfo.TargetItem is SoundPropertyModel)))
+            {
+            }
+        }
+
+        public void DragDropOperationFinished(DragDropEffects operationResult, IDragInfo dragInfo)
+        {
+            return;
+        }
+
+        public void DragCancelled()
+        {
+            return;
+        }
+
+        public bool TryCatchOccurredException(Exception exception)
+        {
+            return false;
+        }
+
+        public void DragOver(IDropInfo dropInfo)
+        {
+            if ((dropInfo.Data is SceneModel && !(dropInfo.TargetItem is SceneModel)) ||
+                (dropInfo.Data is MoodModel && !(dropInfo.TargetItem is MoodModel)) ||
+                (dropInfo.Data is SoundPropertyModel && !(dropInfo.TargetItem is SoundPropertyModel)))
+            {
+                dropInfo.Effects = DragDropEffects.None;
+            }
+        }
+
+        public void Drop(IDropInfo dropInfo)
+        {
+            return;
         }
 
         #endregion

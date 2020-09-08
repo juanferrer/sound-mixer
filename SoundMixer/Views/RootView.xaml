@@ -6,6 +6,7 @@
         xmlns:s="https://github.com/canton7/Stylet"
         xmlns:local="clr-namespace:SoundMixer.Views"
         xmlns:vm="clr-namespace:SoundMixer.ViewModels"
+        xmlns:dd="urn:gong-wpf-dragdrop"
         xmlns:r="clr-namespace:SoundMixer"
         xmlns:custom="clr-namespace:SoundMixer.UserControls"
         mc:Ignorable="d"
@@ -89,7 +90,8 @@
                 <RowDefinition Height="25px"/>
             </Grid.RowDefinitions>
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="sceneStack" ItemsSource="{Binding Workspace.Scenes}" VerticalAlignment="Stretch">
+                <ItemsControl x:Name="sceneStack" ItemsSource="{Binding Workspace.Scenes}" VerticalAlignment="Stretch"
+                              dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DragHandler="{Binding}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Name="scenePanel" Background="White" Margin="0,0,0,0"/>
@@ -112,7 +114,8 @@
             </ScrollViewer>
             <Button x:Name="addSceneButton" Content="Add scene" Click="{s:Action AddScene_Click}" Grid.Column="0" Grid.Row="1"/>
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="moodStack" ItemsSource="{Binding SelectedScene.Moods}">
+                <ItemsControl x:Name="moodStack" ItemsSource="{Binding SelectedScene.Moods}"
+                              dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DragHandler="{Binding}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Name="moodPanel" Background="White" Margin="1,0,1,0"/>
@@ -143,7 +146,8 @@
                     <Image Name="playAllButtonImage" Style="{StaticResource PlayButtonImage}" DataContext="{Binding IsPlayingAll}"/>
                 </Button>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ItemsControl x:Name="soundStack" ItemsSource="{Binding SelectedMood.SoundProperties}">
+                <ItemsControl x:Name="soundStack" ItemsSource="{Binding SelectedMood.SoundProperties}"
+                              dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DragHandler="{Binding}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Name="soundsPanel" Background="White" Margin="0,0,0,0"/>
