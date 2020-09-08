@@ -15,6 +15,9 @@ namespace SoundMixer.Models
         private string name;
 
         [JsonProperty]
+        private bool isURL;
+
+        [JsonProperty]
         private Guid guid;
 
         public string FilePath
@@ -29,16 +32,23 @@ namespace SoundMixer.Models
             set { this.SetAndNotify(ref this.name, value); }
         }
 
+        public bool IsURL
+        {
+            get { return this.isURL; }
+            set { this.SetAndNotify(ref this.isURL, value); }
+        }
+
         public Guid GUID
         {
             get { return this.guid; }
             private set { this.SetAndNotify(ref this.guid, value); }
         }
 
-        public SoundModel(string name, string filePath)
+        public SoundModel(string name, string filePath, bool isURL = false)
         {
             Name = name;
             FilePath = filePath;
+            IsURL = isURL;
             GUID = Guid.NewGuid();
         }
     }

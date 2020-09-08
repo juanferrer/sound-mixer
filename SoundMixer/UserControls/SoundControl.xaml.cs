@@ -9,6 +9,10 @@ using System.Windows.Media;
 
 using SoundMixer.Models;
 using Unosquare.FFME.Common;
+using NYoutubeDL;
+using NYoutubeDL.Models;
+using System.Linq;
+using System.ComponentModel;
 
 namespace SoundMixer.UserControls
 {
@@ -139,7 +143,7 @@ namespace SoundMixer.UserControls
             else
             {
                 // First, does it exist?
-                if (!File.Exists(SoundPropertyModel.Sound.FilePath))
+                if (!SoundPropertyModel.Sound.IsURL && !File.Exists(SoundPropertyModel.Sound.FilePath))
                 {
                     // Add a red border
                     playButton.BorderBrush = new SolidColorBrush(missingSoundColor);
@@ -228,19 +232,52 @@ namespace SoundMixer.UserControls
             RaiseEvent(newEventArgs);
         }
 
-        private async void SoundControl_Loaded(object sender, RoutedEventArgs e)
+        private void SoundControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (!player.IsOpen || player.Source.AbsoluteUri != SoundPropertyModel.Sound.FilePath)
             {
                 player.RendererOptions.DirectSoundDevice = OutputDevice;
                 if (!SoundPropertyModel.IsMuted)
                 {
-                    await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
-                    if (isPlayQueried)
+                    // TODO: Keep UI responsive
+                    BackgroundWorker bg = new BackgroundWorker();
+                    bg.DoWork += async (s, e) =>
                     {
-                        isPlayQueried = false;
-                        Play();
-                    }
+                        var SoundPropertyModel = e.Argument as SoundPropertyModel;
+                        if (SoundPropertyModel.Sound.IsURL)
+                        {
+                            // URLs should be streamed, which requires an audioURL. We use YoutubDL for that
+                            var youtubeDl = new YoutubeDL
+                            {
+                                VideoUrl = SoundPropertyModel.Sound.FilePath,
+                                RetrieveAllInfo = true
+                            };
+
+                            await youtubeDl.PrepareDownloadAsync();
+                            var audioURL = (youtubeDl.Info as VideoDownloadInfo).RequestedFormats.First(v => v.Acodec != "none").Url;
+
+                            await player.Open(new Uri(Uri.UnescapeDataString(audioURL)));
+                        }
+                        else
+                        {
+                            await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
+                        }
+                    };
+
+                    bg.RunWorkerCompleted += (s, e) =>
+                    {
+                        // Sometimes the player status is not updated instantly, give it a moment
+                        while (!player.IsOpen) Thread.Sleep(500);
+
+
+                        if (isPlayQueried)
+                        {
+                            isPlayQueried = false;
+                            Play();
+                        }
+                    };
+
+                    bg.RunWorkerAsync(SoundPropertyModel);
                 }
             }
         }

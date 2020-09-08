@@ -3,11 +3,11 @@
 namespace SoundMixer.Views
 {
     /// <summary>
-    /// Interaction logic for YouTubeDownloadView.xaml
+    /// Interaction logic for StreamView.xaml
     /// </summary>
-    public partial class YouTubeDownloadView : Window
+    public partial class StreamView : Window
     {
-        public YouTubeDownloadView()
+        public StreamView()
         {
             InitializeComponent();
         }

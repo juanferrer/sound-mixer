@@ -19,7 +19,7 @@ using Unosquare.FFME.Common;
 
 namespace SoundMixer.ViewModels
 {
-    public class RootViewModel : Screen, IHandle<AddedSoundFromYouTube>, IHandle<AddingSoundFromYouTube>
+    public class RootViewModel : Screen, IHandle<AddedSoundFromStream>, IHandle<AddingSoundFromStream>
     {
 
         readonly private IWindowManager windowManager;
@@ -241,11 +241,21 @@ namespace SoundMixer.ViewModels
         /// Add a new sound to the selected scene
         /// </summary>
         /// <param name="soundPath"></param>
-        public void AddSound(string soundPath, SoundPropertyModel soundPropertyModel = null)
+        public void AddSound(string soundPath, SoundPropertyModel soundPropertyModel = null, bool isURL = false)
         {
-            string tempName = Path.GetFileNameWithoutExtension(soundPath);
+            string tempName;
 
-            SoundModel newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath);
+            if (isURL)
+            {
+                // TODO: Get ID field from URL
+                tempName = "Video";
+            }
+            else
+            { 
+                tempName = Path.GetFileNameWithoutExtension(soundPath);
+            }
+
+            SoundModel newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath, isURL);
             SelectedScene.Sounds.Add(newSound);
 
             // Then add to every mood
@@ -724,12 +734,12 @@ namespace SoundMixer.ViewModels
             }
         }
 
-        public void AddSoundFromYoutubeButton()
+        public void AddSoundFromStreamButton()
         {
             if (SelectedMood != null)
             {
                 // Adding from youtube, so need to ask for a link
-                this.windowManager.ShowDialog(new YouTubeDownloadViewModel(eventAggregator));
+                this.windowManager.ShowDialog(new StreamViewModel(eventAggregator));
 
                 string downloadedFilePath = "";
 
@@ -803,7 +813,7 @@ namespace SoundMixer.ViewModels
             // Shift was pressed during the click
             if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
-                AddSoundFromYoutubeButton();
+                AddSoundFromStreamButton();
             }
             else
             {
@@ -813,7 +823,7 @@ namespace SoundMixer.ViewModels
 
         public void AddSoundFromYouTube_Click(object sender, RoutedEventArgs e)
         {
-            AddSoundFromYoutubeButton();
+            AddSoundFromStreamButton();
         }
 
         public void Preferences_Click(object sender, RoutedEventArgs e)
@@ -966,16 +976,16 @@ namespace SoundMixer.ViewModels
             e.Handled = true;
         }
 
-        public void Handle(AddedSoundFromYouTube e)
+        public void Handle(AddedSoundFromStream e)
         {
             // Get sound path
             string path = e.Args.SoundPath;
-            AddSound(path);
+            AddSound(path, null, true);
 
             Status = Enums.ProgramStatus.Ready;
         }
 
-        public void Handle(AddingSoundFromYouTube e)
+        public void Handle(AddingSoundFromStream e)
         {
             // Start a "loading dialog"
             Status = Enums.ProgramStatus.Loading;

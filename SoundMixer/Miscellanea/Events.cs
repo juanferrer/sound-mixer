@@ -5,26 +5,26 @@ using System.Windows;
 
 namespace SoundMixer.Miscellanea
 {
-    public class AddedSoundFromYouTube
+    public class AddedSoundFromStream
     {
-        public SoundFromYouTubeArgs Args;
+        public SoundFromStreamArgs Args;
 
-        public AddedSoundFromYouTube(SoundFromYouTubeArgs e)
+        public AddedSoundFromStream(SoundFromStreamArgs e)
         {
             Args = e;
         }
 
-        public class SoundFromYouTubeArgs : RoutedEventArgs
+        public class SoundFromStreamArgs : RoutedEventArgs
         {
             public string SoundPath { get; set; }
-            public SoundFromYouTubeArgs(string path)
+            public SoundFromStreamArgs(string path)
             {
                 SoundPath = path;
             }
         }
     }
 
-    public class AddingSoundFromYouTube
+    public class AddingSoundFromStream
     {
         // Just need the event, no data required
     }
