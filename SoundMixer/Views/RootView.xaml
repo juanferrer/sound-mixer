@@ -12,7 +12,8 @@
         mc:Ignorable="d"
         Title="Sound Mixer" Height="720" Width="1024"
         DataContext="RootViewModel"
-        custom:SoundControl.SoloMuteClick="{s:Action SoloMuteButton_Click}">
+        custom:SoundControl.SoloMuteClick="{s:Action SoloMuteButton_Click}"
+        Closing="{s:Action Window_Closing}">
 
     <Window.InputBindings>
         <KeyBinding Key="N" Modifiers="Ctrl" Command="{s:Action NewWorkspaceFile}"/>

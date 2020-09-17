@@ -23,6 +23,22 @@ namespace SoundMixer.Models
             set => this.SetAndNotify(ref this.availableOutputDevices, value);
         }
 
+        /*private LegacyAudioDeviceInfo selectedOutputDevice;
+
+        public LegacyAudioDeviceInfo SelectedOutputDevice
+        {
+            get => this.selectedOutputDevice;
+            set => this.SetAndNotify(ref this.selectedOutputDevice, value);
+        }
+
+        private BindableCollection<LegacyAudioDeviceInfo> availableOutputDevices;
+
+        public BindableCollection<LegacyAudioDeviceInfo> AvailableOutputDevices
+        {
+            get => this.availableOutputDevices;
+            set => this.SetAndNotify(ref this.availableOutputDevices, value);
+        }*/
+
         public SettingsModel()
         {
 

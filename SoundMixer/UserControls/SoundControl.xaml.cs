@@ -13,6 +13,7 @@ using NYoutubeDL;
 using NYoutubeDL.Models;
 using System.Linq;
 using System.ComponentModel;
+using Serilog;
 
 namespace SoundMixer.UserControls
 {
@@ -36,6 +37,7 @@ namespace SoundMixer.UserControls
 
         private Random rng;
         private CancellationTokenSource delayedPlayCancellationTokenSource;
+        private CancellationTokenSource loadSoundCancellationTokenSource;
         private bool isPlayQueried;
 
         public SoundPropertyModel SoundPropertyModel
@@ -69,11 +71,18 @@ namespace SoundMixer.UserControls
 
             rng = new Random();
             //player.RendererOptions.UseLegacyAudioOut = true;
+            Log.Information("Created SoundControl");
         }
 
         private void UpdatePlayer()
         {
-            player.Volume = volumeSlider.Value;
+            /*if (player.Volume != volumeSlider.Value)
+            {
+                double originalVolume = player.Volume;
+                player.Volume = volumeSlider.Value;
+                Log.Information("Volume for SoundControl {0} changed: {1}->{2}.", SoundPropertyModel.Name, originalVolume, player.Volume);
+                Log.Information("UpdatePlayer() is actually needed.");
+            }*/
         }
 
         public void Play()
@@ -81,12 +90,14 @@ namespace SoundMixer.UserControls
             if (!player.IsOpen)
             {
                 isPlayQueried = true;
+                Log.Information("Querying play of {0}.", SoundPropertyModel.Name);
                 return;
             }
             UpdatePlayer();
             player.Position = TimeSpan.Zero;
             player.Play();
             IsPlaying = true;
+            Log.Information("Playing {0}.", SoundPropertyModel.Name);
         }
 
         public Task AsyncPlay()
@@ -108,7 +119,9 @@ namespace SoundMixer.UserControls
                 delayedPlayCancellationTokenSource = new CancellationTokenSource();
             }
 
-            return Task.Factory.StartNew(async () =>
+            Log.Information("Async playing {0}.", SoundPropertyModel.Name);
+
+            return new Task(async () =>
             {
                 await Task.Delay(delayTime);
                 if (delayedPlayCancellationTokenSource.Token.IsCancellationRequested)
@@ -126,11 +139,25 @@ namespace SoundMixer.UserControls
         public void Stop()
         {
             UpdatePlayer();
+
+            // Cancel thread that keeps sound playing
             if (SoundPropertyModel.IsDelayed)
             {
                 delayedPlayCancellationTokenSource.Cancel();
+                Log.Information("Cancelling delayed play of {0}.", SoundPropertyModel.Name);
             }
-            player.Stop();
+
+            // Stop sound if preparing to play or already playing
+            if (isPlayQueried)
+            {
+                isPlayQueried = false;
+                Log.Information("Cancelling queried play of {0}.", SoundPropertyModel.Name);
+            }
+            else if (IsPlaying)
+            {
+                player.Stop();
+                Log.Information("Stopping {0}.", SoundPropertyModel.Name);
+            }
             IsPlaying = false;
         }
 
@@ -164,11 +191,13 @@ namespace SoundMixer.UserControls
         public void SetPlayerMute(bool state)
         {
             player.IsMuted = state;
+            Log.Information("{0} {1}.", state ? "Muted" : "Unmuted", SoundPropertyModel.Name);
         }
 
         public void SetOutputDevice(DirectSoundDeviceInfo outputDevice)
         {
             player.RendererOptions.DirectSoundDevice = outputDevice;
+            Log.Information("Set output device for {0} to {1}.", SoundPropertyModel.Name, outputDevice.Name);
         }
 
         #region Event Handlers
@@ -239,17 +268,22 @@ namespace SoundMixer.UserControls
                 player.RendererOptions.DirectSoundDevice = OutputDevice;
                 if (!SoundPropertyModel.IsMuted)
                 {
-                    // TODO: Keep UI responsive
-                    BackgroundWorker bg = new BackgroundWorker();
-                    bg.DoWork += async (s, e) =>
+                    if (loadSoundCancellationTokenSource?.IsCancellationRequested ?? true)
                     {
-                        var SoundPropertyModel = e.Argument as SoundPropertyModel;
-                        if (SoundPropertyModel.Sound.IsURL)
+                        loadSoundCancellationTokenSource = new CancellationTokenSource();
+                    }
+
+                    var sound = SoundPropertyModel.Sound;
+
+                    // Load sound and query a play
+                    Task.Run(async () =>
+                    {
+                        if (sound.IsURL)
                         {
                             // URLs should be streamed, which requires an audioURL. We use YoutubDL for that
                             var youtubeDl = new YoutubeDL
                             {
-                                VideoUrl = SoundPropertyModel.Sound.FilePath,
+                                VideoUrl = sound.FilePath,
                                 RetrieveAllInfo = true
                             };
 
@@ -260,26 +294,40 @@ namespace SoundMixer.UserControls
                         }
                         else
                         {
-                            await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
+                            await player.Open(new Uri(sound.FilePath));
                         }
-                    };
 
-                    bg.RunWorkerCompleted += (s, e) =>
-                    {
                         // Sometimes the player status is not updated instantly, give it a moment
-                        while (!player.IsOpen) Thread.Sleep(500);
+                        int sleepCount = 0;
+                        while (!player.IsOpen && sleepCount < 5)
+                        {
+                            sleepCount++; // But not infinitely
+                            Thread.Sleep(500);
+                        }
 
+                        // The task was cancelled while loading
+                        if (loadSoundCancellationTokenSource.IsCancellationRequested)
+                        {
+                            return;
+                        }
 
                         if (isPlayQueried)
                         {
                             isPlayQueried = false;
-                            Play();
+                            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                            {
+                                Play();
+                            }));
                         }
-                    };
-
-                    bg.RunWorkerAsync(SoundPropertyModel);
+                    }, loadSoundCancellationTokenSource.Token);
                 }
             }
+        }
+
+        private void SoundControl_Unloaded(object sender, EventArgs e)
+        {
+            loadSoundCancellationTokenSource?.Cancel();
+            Stop();
         }
 
         #endregion

@@ -6,7 +6,8 @@
              xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
              xmlns:local="clr-namespace:SoundMixer.UserControls"
              mc:Ignorable="d"
-             d:DesignHeight="100" d:DesignWidth="500">
+             d:DesignHeight="100" d:DesignWidth="500"
+             Unloaded="SoundControl_Unloaded">
     <Grid>
         <TextBlock x:Name="editableTextBlock" Text="{Binding SoundPropertyModel.Name, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" Margin="76,10,10,64" FontSize="18"/>
         <Button Name="playButton" Width="50" Height="50" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Click="PlayButton_Click">

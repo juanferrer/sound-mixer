@@ -18,12 +18,12 @@ using Stylet;
 using Unosquare.FFME.Common;
 using GongSolutions.Wpf.DragDrop;
 using SoundMixer.UserControls;
+using Serilog;
 
 namespace SoundMixer.ViewModels
 {
     public class RootViewModel : Screen, IHandle<AddedSoundFromStream>, IHandle<AddingSoundFromStream>, IDragSource, IDropTarget
     {
-
         readonly private IWindowManager windowManager;
         readonly private IEventAggregator eventAggregator;
 
@@ -105,9 +105,30 @@ namespace SoundMixer.ViewModels
 
         public RootViewModel(IWindowManager windowManager, IEventAggregator eventAggregator)
         {
-            Unosquare.FFME.Library.FFmpegDirectory = @"Resources\ffmpeg";
+            // Configure logging (keep the last 7 days)
+            Log.Logger = new LoggerConfiguration().WriteTo.File("log-.txt", restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+                rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7).CreateLogger();
 
+            // Configure global exception handling
+            if (Application.Current != null)
+            {
+                Application.Current.DispatcherUnhandledException += (s, e) =>
+                {
+                    Log.Fatal(e.Exception.Message);
+
+#if (!DEBUG)
+                    e.Handled = true;
+#endif
+                };
+            }
+
+            // Configure FFME
+            Unosquare.FFME.Library.FFmpegDirectory = @"Resources\ffmpeg";
             Unosquare.FFME.Library.FFmpegLoadModeFlags = FFmpeg.AutoGen.FFmpegLoadMode.AudioOnly;
+
+            Log.Information("Loading FFME from {0}.", Path.GetFullPath(Unosquare.FFME.Library.FFmpegDirectory));
+            Log.Information("FFME flags: {0}.", Unosquare.FFME.Library.FFmpegLoadModeFlags.ToString()); ;
 
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
@@ -129,6 +150,7 @@ namespace SoundMixer.ViewModels
             Status = Enums.ProgramStatus.Ready;
 
             outputDevices = new BindableCollection<DirectSoundDeviceInfo>(Unosquare.FFME.Library.EnumerateDirectSoundDevices());
+            //outputDevices = new BindableCollection<LegacyAudioDeviceInfo>(Unosquare.FFME.Library.EnumerateLegacyAudioDevices());
 
             SelectedOutputDevice = outputDevices.ElementAt(0);
         }
@@ -163,6 +185,8 @@ namespace SoundMixer.ViewModels
             Workspace.Scenes.Add(new SceneModel(GetUniqueNameFromString(sceneName, Workspace.Scenes.Select(o => o.Name).ToList())));
 
             isDirty = true;
+
+            Log.Information("Adding scene {0}.", sceneName);
         }
 
         /// <summary>
@@ -188,6 +212,8 @@ namespace SoundMixer.ViewModels
                     Workspace.Scenes.RemoveAt(i);
 
                     isDirty = true;
+
+                    Log.Information("Removing scene {0}.", sceneName);
                 }
             }
         }
@@ -210,6 +236,8 @@ namespace SoundMixer.ViewModels
             }
 
             isDirty = true;
+
+            Log.Information("Adding mood {0} to scene {1}.", moodName, SelectedScene.Name);
         }
 
         /// <summary>
@@ -229,12 +257,14 @@ namespace SoundMixer.ViewModels
                     if (SelectedMood.Name == moodName)
                     {
                         StopAllSounds();
-                        //SelectedMood = SelectedScene.Moods.Count > 0 ? SelectedScene.Moods[0] : null;
+                        SelectedMood = SelectedScene.Moods.Count > 1 ? SelectedScene.Moods[0] : null;
                     }
 
                     SelectedScene.Moods.RemoveAt(i);
 
                     isDirty = true;
+
+                    Log.Information("Removing mood {0} from scene {1}.", moodName, SelectedScene.Name);
                 }
             }
         }
@@ -289,6 +319,8 @@ namespace SoundMixer.ViewModels
             }
 
             isDirty = true;
+
+            Log.Information("Adding sound {0} to scene {1}.", newSound.Name, SelectedScene.Name);
         }
 
         /// <summary>
@@ -316,6 +348,8 @@ namespace SoundMixer.ViewModels
             }
 
             isDirty = true;
+
+            Log.Information("Removing sound {0} from scene {1}.", soundName, SelectedScene.Name);
         }
 
         /// <summary>
@@ -343,6 +377,8 @@ namespace SoundMixer.ViewModels
             }
 
             isDirty = true;
+
+            Log.Information("Removing sound {0} from scene {1}.", FindSoundFromGuid(soundGuid).Name, SelectedScene.Name);
         }
 
         public void SelectScene(string name)
@@ -383,6 +419,7 @@ namespace SoundMixer.ViewModels
             }
 
             //SelectMood(0);
+            Log.Information("Selecting scene {0} by name.", name);
         }
 
         public void SelectScene(int index)
@@ -415,6 +452,7 @@ namespace SoundMixer.ViewModels
             }
 
             //SelectMood(0);
+            Log.Information("Selecting scene {0} by index.", Workspace.Scenes[index].Name);
         }
 
         public void SelectMood(string name)
@@ -454,6 +492,7 @@ namespace SoundMixer.ViewModels
                     break;
                 }
             }
+            Log.Information("Selecting mood {0} in {1} by name.", name, SelectedScene.Name);
         }
 
         public void SelectMood(int index)
@@ -486,12 +525,15 @@ namespace SoundMixer.ViewModels
             }
 
             PlayAllSounds();
+            Log.Information("Selecting mood {0} in {1} by index.", SelectedScene.Moods[index].Name, SelectedScene.Name);
         }
 
         public void SaveWorkspace(string path)
         {
             string json = JsonConvert.SerializeObject(Workspace, Formatting.Indented);
             File.WriteAllText(path, json);
+
+            Log.Information("Saving workspace to {0}.", path);
         }
 
         public void LoadWorkspace(string path)
@@ -521,6 +563,8 @@ namespace SoundMixer.ViewModels
 
             // After loading everything, set a default selection
             SelectScene(0);
+
+            Log.Information("Loading workspace from {0}", path);
         }
 
         public SoundModel FindSoundFromGuid(Guid guid)
@@ -630,6 +674,8 @@ namespace SoundMixer.ViewModels
             SelectedScene = null;
             SelectedMood = null;
             activeFilePath = "";
+
+            Log.Information("Creating new workspace.");
         }
 
         public void OpenWorkspaceFile()
@@ -774,7 +820,7 @@ namespace SoundMixer.ViewModels
             // First go through all sound controls and check if any is solo
             foreach (var soundControl in soundControls)
             {
-                soundControl.SetOutputDevice(SelectedOutputDevice);
+                //soundControl.SetOutputDevice(SelectedOutputDevice);
             }
         }
 
@@ -976,6 +1022,11 @@ namespace SoundMixer.ViewModels
             }
 
             e.Handled = true;
+        }
+
+        public void Window_Closing(object sender, EventArgs e)
+        {
+            Log.CloseAndFlush();
         }
 
         public void Handle(AddedSoundFromStream e)
