@@ -47,20 +47,12 @@ namespace SoundMixer.UserControls
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            FileDialog fileDialog;
-            switch (DialogType)
+            FileDialog fileDialog = DialogType switch
             {
-                case "Open":
-                    fileDialog = new OpenFileDialog();
-                    break;
-                case "Save":
-                    fileDialog = new SaveFileDialog();
-                    break;
-                default:
-                    throw new ArgumentException("Only \"Open\" and \"Save\" dialogs can be created this way");
-
-            }
-
+                "Open" => new OpenFileDialog(),
+                "Save" => new SaveFileDialog(),
+                _ => throw new ArgumentException("Only \"Open\" and \"Save\" dialogs can be created this way"),
+            };
             if (!string.IsNullOrEmpty(DialogFilter))
             {
                 fileDialog.Filter = DialogFilter;

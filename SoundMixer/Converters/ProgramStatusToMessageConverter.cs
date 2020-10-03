@@ -10,7 +10,7 @@ namespace SoundMixer.Converters
 {
     class ProgramStatusToMessageConverter : IValueConverter
     {
-        private Dictionary<Enums.ProgramStatus, string> dictionary = new Dictionary<Enums.ProgramStatus, string>()
+        readonly private Dictionary<Enums.ProgramStatus, string> dictionary = new Dictionary<Enums.ProgramStatus, string>()
         {
             { Enums.ProgramStatus.Loading, "Loading" },
             { Enums.ProgramStatus.Ready, "Ready" }

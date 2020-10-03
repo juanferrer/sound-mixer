@@ -10,15 +10,15 @@ namespace SoundMixer.ViewModels
 {
     class AboutViewModel : Screen
     {
-        private string programName;
-        private string programVersion;
-        private DateTime buildDate;
+        readonly private string programName;
+        readonly private string programVersion;
+        readonly private DateTime buildDate;
         
-        private string authorName;
-        private string projectWebsite;
+        readonly private string authorName;
+        readonly private string projectWebsite;
 
 
-        private string licenceText = "MIT License" +
+        readonly private string licenceText = "MIT License" +
             "\n\n" +
             "Copyright (c) 2020 Juan Ferrer" +
             "\n\n" +
@@ -88,7 +88,7 @@ namespace SoundMixer.ViewModels
             authorName = fvi.CompanyName;
             projectWebsite = "https://github.com/juanferrer/sound-mixer";
 
-            BuildInfo = $"{programName} {programVersion}\n{buildDate.ToString("MMM yyyy")}";
+            BuildInfo = $"{programName} {programVersion}\n{buildDate:MMM yyyy}";
             AuthorInfo = authorName;
             WebsiteInfo = projectWebsite;
             LicenceInfo = licenceText;

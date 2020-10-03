@@ -818,10 +818,10 @@ namespace SoundMixer.ViewModels
             List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
             // First go through all sound controls and check if any is solo
-            foreach (var soundControl in soundControls)
+            /*foreach (var soundControl in soundControls)
             {
                 //soundControl.SetOutputDevice(SelectedOutputDevice);
-            }
+            }*/
         }
 
         #region EventHandlers

@@ -31,11 +31,11 @@ namespace SoundMixer.UserControls
             remove { RemoveHandler(SoloMuteClickEvent, value); }
         }
 
-        private static Color missingSoundColor = Color.FromRgb(255, 0, 0);
+        readonly private static Color missingSoundColor = Color.FromRgb(255, 0, 0);
 
-        private string resourcesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
+        //readonly private string resourcesPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
 
-        private Random rng;
+        readonly private Random rng;
         private CancellationTokenSource delayedPlayCancellationTokenSource;
         private CancellationTokenSource loadSoundCancellationTokenSource;
         private bool isPlayQueried;
