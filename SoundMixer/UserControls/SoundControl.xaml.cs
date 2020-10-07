@@ -85,7 +85,7 @@ namespace SoundMixer.UserControls
             }*/
         }
 
-        public void Play()
+        public async Task Play()
         {
             if (!player.IsOpen)
             {
@@ -94,13 +94,14 @@ namespace SoundMixer.UserControls
                 return;
             }
             UpdatePlayer();
-            player.Position = TimeSpan.Zero;
-            player.Play();
+            //player.Position = TimeSpan.Zero;
+            await player.Seek(TimeSpan.Zero);
+            await player.Play();
             IsPlaying = true;
             Log.Information("Playing {0}.", SoundPropertyModel.Name);
         }
 
-        public Task AsyncPlay()
+        public Task DelayedPlay()
         {
             UpdatePlayer();
 
@@ -161,7 +162,7 @@ namespace SoundMixer.UserControls
             IsPlaying = false;
         }
 
-        public void PlayOrStop()
+        public async Task PlayOrStop()
         {
             if (IsPlaying)
             {
@@ -179,11 +180,11 @@ namespace SoundMixer.UserControls
 
                 if (SoundPropertyModel.IsDelayed)
                 {
-                    AsyncPlay();
+                    _ = DelayedPlay();
                 }
                 else
                 {
-                    Play();
+                    await Play();
                 }
             }
         }
@@ -202,23 +203,23 @@ namespace SoundMixer.UserControls
 
         #region Event Handlers
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        private async void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayOrStop();
+            await PlayOrStop();
         }
 
-        private void SoundMediaElement_MediaEnded(object sender, EventArgs e)
+        private async void SoundMediaElement_MediaEnded(object sender, EventArgs e)
         {
             // The sound may have to loop
             if (SoundPropertyModel.IsLoop)
             {
                 if (SoundPropertyModel.IsDelayed)
                 {
-                    AsyncPlay();
+                    DelayedPlay();
                 }
                 else
                 {
-                    Play();
+                    await Play();
                 }
             }
             else
