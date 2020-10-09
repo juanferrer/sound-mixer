@@ -130,9 +130,9 @@ namespace SoundMixer.UserControls
                     return;
                 }
 
-                Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                _ = Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
                 {
-                    Play();
+                    _ = Play();
                 }));
             }, delayedPlayCancellationTokenSource.Token);
         }
@@ -156,7 +156,7 @@ namespace SoundMixer.UserControls
             }
             else if (IsPlaying)
             {
-                player.Stop();
+                _ = player.Stop();
                 Log.Information("Stopping {0}.", SoundPropertyModel.Name);
             }
             IsPlaying = false;
@@ -215,7 +215,7 @@ namespace SoundMixer.UserControls
             {
                 if (SoundPropertyModel.IsDelayed)
                 {
-                    DelayedPlay();
+                    _ = DelayedPlay();
                 }
                 else
                 {
@@ -224,7 +224,7 @@ namespace SoundMixer.UserControls
             }
             else
             {
-                player.Stop();
+                _ = player.Stop();
                 IsPlaying = false;
             }
         }
@@ -277,7 +277,7 @@ namespace SoundMixer.UserControls
                     var sound = SoundPropertyModel.Sound;
 
                     // Load sound and query a play
-                    Task.Run(async () =>
+                    _ = Task.Run(async () =>
                     {
                         if (sound.IsURL)
                         {
@@ -315,9 +315,9 @@ namespace SoundMixer.UserControls
                         if (isPlayQueried)
                         {
                             isPlayQueried = false;
-                            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                            _ = Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
                             {
-                                Play();
+                                _ = Play();
                             }));
                         }
                     }, loadSoundCancellationTokenSource.Token);
