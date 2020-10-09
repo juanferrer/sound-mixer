@@ -50,36 +50,6 @@
             </MenuItem>
         </Menu>
         <Separator DockPanel.Dock="Top"/>
-        <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem Height="22" Width="22">
-                <Image RenderTransformOrigin="0.5,0.5" Source="/Resources/loading.png" Visibility="{Binding ShowLoadingImage, Converter={StaticResource BooleanToVisibilityConverter}}" >
-                    <Image.Triggers>
-                        <EventTrigger RoutedEvent="Image.Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation From="0.0" To="360.0" Duration="0:0:1" RepeatBehavior="Forever"
-                                                     Storyboard.TargetName="RotatingTransform"
-                                                     Storyboard.TargetProperty="(RotateTransform.Angle)"/>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </Image.Triggers>
-                    <Image.RenderTransform>
-                        <RotateTransform x:Name="RotatingTransform" Angle="0"/>
-                    </Image.RenderTransform>
-                </Image>
-            </StatusBarItem>
-            <StatusBarItem>
-                <TextBlock Text="{Binding Status, Converter={StaticResource ProgramStatusToMessageConverter}}"/>
-            </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right" Visibility="{Binding IsPlayingAll, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock>
-                    <Run Text="{Binding SelectedScene.Name}"/>
-                    <Run Text=" - "/>
-                    <Run Text="{Binding SelectedMood.Name}"/>
-                </TextBlock>
-            </StatusBarItem>
-        </StatusBar>
         <Grid Name="mainGrid" Background="#40000000" Focusable="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

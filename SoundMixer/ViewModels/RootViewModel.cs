@@ -94,13 +94,7 @@ namespace SoundMixer.ViewModels
             set
             {
                 this.SetAndNotify(ref this.status, value);
-                this.NotifyOfPropertyChange("ShowLoadingImage");
             }
-        }
-
-        public bool? ShowLoadingImage
-        {
-            get { return this.status == Enums.ProgramStatus.Loading; }
         }
 
         public RootViewModel(IWindowManager windowManager, IEventAggregator eventAggregator)
