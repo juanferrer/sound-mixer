@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:SoundMixer.Views"
         xmlns:custom="clr-namespace:SoundMixer.UserControls"
         mc:Ignorable="d"
-        Title="Edit sound" Height="300" Width="300" ResizeMode="NoResize">
+        Title="Edit sound" Height="320" Width="300" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50px"/>
@@ -18,6 +18,10 @@
             <Label Content="Current file:"/>
             <custom:BrowseControl Text="Browse..." FilePath="{Binding SoundPropertyModel.Sound.FilePath, Mode=TwoWay}" Margin="5,0"
                                   DialogType="Open" DialogFilter="Sound files (*.mp3;*.wav)|*.mp3;*.wav|All files (*.*)|*.*"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Length:"/>
+                <TextBlock Text="{Binding SoundPropertyModel.Sound.Duration, Converter={StaticResource DurationFormatConverter}}" VerticalAlignment="Center"/>
+            </StackPanel>
             <CheckBox Content="Loop" IsChecked="{Binding SoundPropertyModel.IsLoop, Mode=TwoWay}" Margin="0,7"/>
             <GroupBox Padding="7">
                 <GroupBox.Header>

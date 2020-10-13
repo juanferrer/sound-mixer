@@ -19,6 +19,11 @@ using Unosquare.FFME.Common;
 using GongSolutions.Wpf.DragDrop;
 using SoundMixer.UserControls;
 using Serilog;
+using System.Threading.Channels;
+using Microsoft.WindowsAPICodePack.Shell;
+using System.Threading;
+using NYoutubeDL;
+using NYoutubeDL.Models;
 
 namespace SoundMixer.ViewModels
 {
@@ -274,14 +279,17 @@ namespace SoundMixer.ViewModels
             if (isURL)
             {
                 // TODO: Get ID field from URL
-                tempName = "Video";
+                tempName = "URL";
             }
             else
             {
                 tempName = Path.GetFileNameWithoutExtension(soundPath);
             }
 
-            SoundModel newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath, isURL);
+            // TODO: Move this to another thread
+            long soundDuration = GetMediaDuration(soundPath, isURL);
+
+            SoundModel newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath, soundDuration, isURL);
             SelectedScene.Sounds.Add(newSound);
 
             // Then add to every mood
@@ -599,7 +607,7 @@ namespace SoundMixer.ViewModels
                     if (!soundControl.IsPlaying && soundControl.SoundPropertyModel.IsLoop)
                     {
                         // Don't want to accidentally restart a sound
-                        soundControl.PlayOrStop();
+                        _ = soundControl.PlayOrStop();
                         foundOne = true;
                     }
                 }
@@ -621,7 +629,7 @@ namespace SoundMixer.ViewModels
                     if (soundControl.IsPlaying)
                     {
                         // Don't want to accidentally restart a sound
-                        soundControl.PlayOrStop();
+                        _ = soundControl.PlayOrStop();
                     }
                 }
 
@@ -816,6 +824,34 @@ namespace SoundMixer.ViewModels
             {
                 //soundControl.SetOutputDevice(SelectedOutputDevice);
             }*/
+        }
+
+        /// <summary>
+        ///  Number of ticks in file or video
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="isURL"></param>
+        /// <returns></returns>
+        public long GetMediaDuration(string path, bool isURL)
+        {
+            long duration;
+            if (isURL)
+            {
+                var youtubeDl = new YoutubeDL
+                {
+                    VideoUrl = path,
+                    RetrieveAllInfo = true
+                };
+                youtubeDl.PrepareDownload();
+                TimeSpan durationSpan = TimeSpan.FromSeconds((long)(youtubeDl.Info as VideoDownloadInfo).Duration);
+                duration = durationSpan.Ticks;
+            }
+            else
+            {
+                ShellFile sf = ShellFile.FromFilePath(path);
+                long.TryParse(sf.Properties.System.Media.Duration.Value.ToString(), out duration);
+            }
+            return duration;
         }
 
         #region EventHandlers
@@ -1063,7 +1099,7 @@ namespace SoundMixer.ViewModels
         }
 
         public void Dropped(IDropInfo dropInfo)
-        { 
+        {
             if ((dropInfo.Data is SceneModel && !(dropInfo.TargetItem is SceneModel)) ||
                 (dropInfo.Data is MoodModel && !(dropInfo.TargetItem is MoodModel)) ||
                 (dropInfo.Data is SoundPropertyModel && !(dropInfo.TargetItem is SoundPropertyModel)))

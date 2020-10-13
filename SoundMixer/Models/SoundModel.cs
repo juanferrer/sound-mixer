@@ -20,6 +20,9 @@ namespace SoundMixer.Models
         [JsonProperty]
         private Guid guid;
 
+        [JsonProperty]
+        private long duration;
+
         public string FilePath
         {
             get { return this.filePath; }
@@ -44,12 +47,19 @@ namespace SoundMixer.Models
             private set { this.SetAndNotify(ref this.guid, value); }
         }
 
-        public SoundModel(string name, string filePath, bool isURL = false)
+        public long Duration
+        {
+            get { return this.duration; }
+            private set { this.SetAndNotify(ref this.duration, value); }
+        }
+
+        public SoundModel(string name, string filePath, long duration, bool isURL = false)
         {
             Name = name;
             FilePath = filePath;
             IsURL = isURL;
             GUID = Guid.NewGuid();
+            Duration = duration;
         }
     }
 }

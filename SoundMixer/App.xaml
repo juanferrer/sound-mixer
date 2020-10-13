@@ -18,6 +18,7 @@
             <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter"/>
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
             <converters:ProgramStatusToMessageConverter x:Key="ProgramStatusToMessageConverter"/>
+            <converters:DurationFormatConverter x:Key="DurationFormatConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
