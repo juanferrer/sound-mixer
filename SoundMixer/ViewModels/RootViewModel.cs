@@ -842,7 +842,11 @@ namespace SoundMixer.ViewModels
                     VideoUrl = path,
                     RetrieveAllInfo = true
                 };
-                youtubeDl.PrepareDownload();
+
+                // This is taking way too long
+                // TODO: Fix and re-include
+                // youtubeDl.PrepareDownload();
+                return 0;
                 TimeSpan durationSpan = TimeSpan.FromSeconds((long)(youtubeDl.Info as VideoDownloadInfo).Duration);
                 duration = durationSpan.Ticks;
             }

@@ -180,7 +180,7 @@ namespace SoundMixer.UserControls
 
                 if (SoundPropertyModel.IsDelayed)
                 {
-                    _ = DelayedPlay();
+                    DelayedPlay().RunSynchronously();
                 }
                 else
                 {
@@ -215,7 +215,7 @@ namespace SoundMixer.UserControls
             {
                 if (SoundPropertyModel.IsDelayed)
                 {
-                    _ = DelayedPlay();
+                    DelayedPlay().RunSynchronously();
                 }
                 else
                 {
