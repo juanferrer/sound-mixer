@@ -79,16 +79,16 @@ namespace SoundMixer.ViewModels
         public AboutViewModel()
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
+            var fvi = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
             
             programName = fvi.ProductName;
             programVersion = fvi.ProductVersion;
-            buildDate = GetBuildDate();
+            // buildDate = GetBuildDate();
 
             authorName = fvi.CompanyName;
             projectWebsite = "https://github.com/juanferrer/sound-mixer";
 
-            BuildInfo = $"{programName} {programVersion}\n{buildDate:MMM yyyy}";
+            BuildInfo = $"{programName} {programVersion}";
             AuthorInfo = authorName;
             WebsiteInfo = projectWebsite;
             LicenceInfo = licenceText;
@@ -96,7 +96,7 @@ namespace SoundMixer.ViewModels
 
         public void Hyperlink_RequestNavigate(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo psi = new ProcessStartInfo
+            var psi = new ProcessStartInfo()
             {
                 FileName = (e as RequestNavigateEventArgs)?.Uri.ToString(),
                 UseShellExecute = true

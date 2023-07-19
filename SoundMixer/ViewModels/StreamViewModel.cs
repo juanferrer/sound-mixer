@@ -33,11 +33,11 @@ namespace SoundMixer.ViewModels
         {
             try
             {
-                HttpWebRequest request = HttpWebRequest.Create(url) as HttpWebRequest;
+                var request = HttpWebRequest.Create(url) as HttpWebRequest;
                 request.Timeout = 5000; // Set the timeout to 5 seconds to keep the user from waiting too long for the page to load
                 request.Method = "HEAD"; // Get only the header information -- no need to download any content
 
-                using HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                using var response = request.GetResponse() as HttpWebResponse;
                 int statusCode = (int)response.StatusCode;
                 if (statusCode >= 100 && statusCode < 400) //Good requests
                 {

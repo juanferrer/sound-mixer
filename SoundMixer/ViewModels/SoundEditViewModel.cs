@@ -33,10 +33,10 @@ namespace SoundMixer.ViewModels
 
         public void TextBox_TextChanged(object sender, RoutedEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            string newText = string.Empty;
-            int count = 0;
-            foreach (char c in textBox.Text.ToCharArray())
+            var textBox = sender as TextBox;
+            var newText = string.Empty;
+            var count = 0;
+            foreach (var c in textBox.Text.ToCharArray())
             {
                 if (char.IsDigit(c) || char.IsControl(c) || (c == '.' && count == 0))
                 {

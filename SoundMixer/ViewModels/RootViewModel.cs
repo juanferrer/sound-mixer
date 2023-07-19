@@ -127,7 +127,7 @@ namespace SoundMixer.ViewModels
             Unosquare.FFME.Library.FFmpegLoadModeFlags = FFmpeg.AutoGen.FFmpegLoadMode.AudioOnly;
 
             Log.Information("Loading FFME from {0}.", Path.GetFullPath(Unosquare.FFME.Library.FFmpegDirectory));
-            Log.Information("FFME flags: {0}.", Unosquare.FFME.Library.FFmpegLoadModeFlags.ToString()); ;
+            Log.Information("FFME flags: {0}.", Unosquare.FFME.Library.FFmpegLoadModeFlags.ToString());
 
             this.windowManager = windowManager;
             this.eventAggregator = eventAggregator;
@@ -163,8 +163,8 @@ namespace SoundMixer.ViewModels
         public string GetUniqueNameFromString(string baseName, IList<string> list)
         {
             // Generate unique name for scene
-            string potentialName = baseName;
-            int i = 1;
+            var potentialName = baseName;
+            var i = 1;
 
             while (list.Contains(potentialName))
             {
@@ -195,11 +195,11 @@ namespace SoundMixer.ViewModels
         public void RemoveScene(string sceneName)
         {
             var length = Workspace.Scenes.Count;
-            for (int i = length - 1; i >= 0; --i)
+            for (var i = length - 1; i >= 0; --i)
             {
                 if (Workspace.Scenes[i].Name == sceneName)
                 {
-                    string selectedSceneName = SelectedScene.Name; // Just in case we are removing the selected scene
+                    var selectedSceneName = SelectedScene.Name; // Just in case we are removing the selected scene
 
                     // Select a different scene and mood if we deleted the selected one
                     if (selectedSceneName == sceneName)
@@ -224,7 +224,7 @@ namespace SoundMixer.ViewModels
         /// <param name="sceneName"></param>
         public void AddMood(string moodName)
         {
-            MoodModel newMood = new MoodModel(GetUniqueNameFromString(moodName, SelectedScene.Moods.Select(o => o.Name).ToList()));
+            var newMood = new MoodModel(GetUniqueNameFromString(moodName, SelectedScene.Moods.Select(o => o.Name).ToList()));
             SelectedScene.Moods.Add(newMood);
 
             // Then add all the sounds from the scene
@@ -247,7 +247,7 @@ namespace SoundMixer.ViewModels
         public void RemoveMood(string moodName)
         {
             var length = SelectedScene.Moods.Count;
-            for (int i = length - 1; i >= 0; --i)
+            for (var i = length - 1; i >= 0; --i)
             {
                 if (SelectedScene.Moods[i].Name == moodName)
                 {
@@ -297,13 +297,13 @@ namespace SoundMixer.ViewModels
             {
                 if (soundPropertyModel == null)
                 {
-                    string newName = GetUniqueNameFromString(newSound.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
+                    var newName = GetUniqueNameFromString(newSound.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
                     mood.SoundProperties.Add(new SoundPropertyModel(newName, defaultVolume, newSound.GUID));
                 }
                 else
                 {
                     // Clone the sound
-                    string newName = GetUniqueNameFromString(soundPropertyModel.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
+                    var newName = GetUniqueNameFromString(soundPropertyModel.Name, SelectedMood.SoundProperties.Select(o => o.Name).ToList());
                     var newSoundPropertyModel = new SoundPropertyModel(newName, soundPropertyModel.Volume, soundPropertyModel.GUID)
                     {
                         IsDelayed = soundPropertyModel.IsDelayed,
@@ -316,7 +316,7 @@ namespace SoundMixer.ViewModels
                     mood.SoundProperties.Add(newSoundPropertyModel);
                 }
 
-                SoundModel sound = FindSoundFromGuid(newSound.GUID);
+                var sound = FindSoundFromGuid(newSound.GUID);
                 mood.SoundProperties.LastOrDefault().Sound = sound;
             }
 
@@ -332,8 +332,8 @@ namespace SoundMixer.ViewModels
         public void RemoveSound(string soundName)
         {
             var length = SelectedScene.Sounds.Count;
-            int soundIndex = -1;
-            for (int i = length - 1; i >= 0; --i)
+            var soundIndex = -1;
+            for (var i = length - 1; i >= 0; --i)
             {
                 if (SelectedScene.Sounds[i].Name == soundName)
                 {
@@ -361,8 +361,8 @@ namespace SoundMixer.ViewModels
         public void RemoveSound(Guid soundGuid)
         {
             var length = SelectedScene.Sounds.Count;
-            int soundIndex = -1;
-            for (int i = length - 1; i >= 0; --i)
+            var soundIndex = -1;
+            for (var i = length - 1; i >= 0; --i)
             {
                 if (SelectedScene.Sounds[i].GUID == soundGuid)
                 {
@@ -387,7 +387,7 @@ namespace SoundMixer.ViewModels
         {
             StopAllSounds();
 
-            for (int i = 0; i < Workspace.Scenes.Count; ++i)
+            for (var i = 0; i < Workspace.Scenes.Count; ++i)
             {
                 if (Workspace.Scenes[i].Name == name)
                 {
@@ -401,7 +401,7 @@ namespace SoundMixer.ViewModels
                     }
 
                     var sceneStack = (View as Views.RootView).sceneStack;
-                    List<Button> sceneButtons = sceneStack.GetChildrenOfType<Button>();
+                    var sceneButtons = sceneStack.GetChildrenOfType<Button>();
 
                     // Apply the default style to every scene button and the selected style to the newly selected one
                     foreach (var sceneButton in sceneButtons)
@@ -438,7 +438,7 @@ namespace SoundMixer.ViewModels
             }
 
             var sceneStack = (View as Views.RootView).sceneStack;
-            List<Button> sceneButtons = sceneStack.GetChildrenOfType<Button>();
+            var sceneButtons = sceneStack.GetChildrenOfType<Button>();
 
             // Apply the default style to every scene button and the selected style to the newly selected one
             foreach (var sceneButton in sceneButtons)
@@ -475,7 +475,7 @@ namespace SoundMixer.ViewModels
                     }
 
                     var moodStack = (View as Views.RootView).moodStack;
-                    List<Button> moodButtons = moodStack.GetChildrenOfType<Button>();
+                    var moodButtons = moodStack.GetChildrenOfType<Button>();
 
                     // Apply the default style to every scene button and the selected style to the newly selected one
                     foreach (var moodButton in moodButtons)
@@ -511,7 +511,7 @@ namespace SoundMixer.ViewModels
             }
 
             var moodStack = (View as Views.RootView).moodStack;
-            List<Button> moodButtons = moodStack.GetChildrenOfType<Button>();
+            var moodButtons = moodStack.GetChildrenOfType<Button>();
 
             // Apply the default style to every scene button and the selected style to the newly selected one
             foreach (var moodButton in moodButtons)
@@ -573,7 +573,7 @@ namespace SoundMixer.ViewModels
         {
             foreach (var scene in Workspace.Scenes)
             {
-                SoundModel potentialResult = scene.Sounds.Where(o => o.GUID == guid).FirstOrDefault();
+                var potentialResult = scene.Sounds.Where(o => o.GUID == guid).FirstOrDefault();
 
                 if (potentialResult != null) return potentialResult;
             }
@@ -598,9 +598,9 @@ namespace SoundMixer.ViewModels
         {
             if (View != null)
             {
-                bool foundOne = false;
+                var foundOne = false;
                 var soundStack = (View as Views.RootView).soundStack;
-                List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
+                var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
                 foreach (var soundControl in soundControls)
                 {
@@ -622,7 +622,7 @@ namespace SoundMixer.ViewModels
             if (View != null)
             {
                 var soundStack = (View as Views.RootView).soundStack;
-                List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
+                var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
                 foreach (var soundControl in soundControls)
                 {
@@ -640,12 +640,12 @@ namespace SoundMixer.ViewModels
 
         public bool ContinueAfterOfferSave()
         {
-            string fileName = Path.GetFileNameWithoutExtension(activeFilePath);
+            var fileName = Path.GetFileNameWithoutExtension(activeFilePath);
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = "Untitled";
             }
-            string message = $"Do you want to save changes to {fileName}?";
+            var message = $"Do you want to save changes to {fileName}?";
             var result = this.windowManager.ShowMessageBox(message, "SoundMixer", MessageBoxButton.YesNoCancel);
 
             if (result == MessageBoxResult.Yes)
@@ -691,13 +691,13 @@ namespace SoundMixer.ViewModels
                 }
             }
 
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            var openFileDialog = new OpenFileDialog()
             {
                 Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                string path = openFileDialog.FileName;
+                var path = openFileDialog.FileName;
                 if (File.Exists(path))
                 {
                     activeFilePath = path;
@@ -711,7 +711,7 @@ namespace SoundMixer.ViewModels
             // We should save over the previously used file, if any
             if (string.IsNullOrEmpty(activeFilePath))
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog
+                var saveFileDialog = new SaveFileDialog()
                 {
                     Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
                 };
@@ -731,7 +731,7 @@ namespace SoundMixer.ViewModels
 
         public void SaveWorkspaceFileAs()
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            var saveFileDialog = new SaveFileDialog()
             {
                 Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
             };
@@ -774,11 +774,11 @@ namespace SoundMixer.ViewModels
             if (SelectedMood != null)
             {
                 // First open a file dialog to select the sound
-                OpenFileDialog openFileDialog = new OpenFileDialog();
+                var openFileDialog = new OpenFileDialog();
 
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    string filePath = openFileDialog.FileName;
+                    var filePath = openFileDialog.FileName;
                     AddSound(filePath);
                 }
             }
@@ -791,7 +791,7 @@ namespace SoundMixer.ViewModels
                 // Adding from youtube, so need to ask for a link
                 this.windowManager.ShowDialog(new StreamViewModel(eventAggregator));
 
-                string downloadedFilePath = "";
+                var downloadedFilePath = "";
 
                 if (File.Exists(downloadedFilePath))
                 {
@@ -817,7 +817,7 @@ namespace SoundMixer.ViewModels
         public void UpdateOutputDeviceInSounds()
         {
             var soundStack = (View as Views.RootView).soundStack;
-            List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
+            var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
             // First go through all sound controls and check if any is solo
             /*foreach (var soundControl in soundControls)
@@ -847,8 +847,8 @@ namespace SoundMixer.ViewModels
                 // TODO: Fix and re-include
                 // youtubeDl.PrepareDownload();
                 return 0;
-                TimeSpan durationSpan = TimeSpan.FromSeconds((long)(youtubeDl.Info as VideoDownloadInfo).Duration);
-                duration = durationSpan.Ticks;
+                //TimeSpan durationSpan = TimeSpan.FromSeconds((long)(youtubeDl.Info as VideoDownloadInfo).Duration);
+                //duration = durationSpan.Ticks;
             }
             else
             {
@@ -915,7 +915,7 @@ namespace SoundMixer.ViewModels
 
         public void SelectScene_LeftMouseUp(object sender, RoutedEventArgs e)
         {
-            string name = ((sender as Button)?.Content as UserControls.EditableTextBlock).Text;
+            var name = ((sender as Button)?.Content as UserControls.EditableTextBlock).Text;
             if (name != null)
             {
                 SelectScene(name);
@@ -924,7 +924,7 @@ namespace SoundMixer.ViewModels
 
         public void SelectMood_LeftMouseUp(object sender, RoutedEventArgs e)
         {
-            string name = ((sender as Button)?.Content as UserControls.EditableTextBlock).Text;
+            var name = ((sender as Button)?.Content as UserControls.EditableTextBlock).Text;
             if (name != null)
             {
                 SelectMood(name);
@@ -940,7 +940,7 @@ namespace SoundMixer.ViewModels
 
         public void RemoveSceneButton_Click(object sender, RoutedEventArgs e)
         {
-            string name = ((((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock)?.Text;
+            var name = ((((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock)?.Text;
             if (name != null)
             {
                 RemoveScene(name);
@@ -956,7 +956,7 @@ namespace SoundMixer.ViewModels
 
         public void RemoveMoodButton_Click(object sender, RoutedEventArgs e)
         {
-            string name = ((((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock)?.Text;
+            var name = ((((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as Button)?.Content as UserControls.EditableTextBlock)?.Text;
             if (name != null)
             {
                 RemoveMood(name);
@@ -984,12 +984,9 @@ namespace SoundMixer.ViewModels
         public void RemoveSoundControl_Click(object sender, RoutedEventArgs e)
         {
             var soundControl = (((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as UserControls.SoundControl);
-            Guid guid = soundControl.SoundPropertyModel.GUID;
-            if (guid != null)
-            {
-                soundControl.Stop();
-                RemoveSound(guid);
-            }
+            var guid = soundControl.SoundPropertyModel.GUID;
+            soundControl.Stop();
+            RemoveSound(guid);
         }
 
         public void PlayAllButton_Click(object sender, RoutedEventArgs e)
@@ -1000,12 +997,12 @@ namespace SoundMixer.ViewModels
         public void ReportABug_Click(object sender, RoutedEventArgs e)
         {
             var executingAssembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
+            var fvi = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
 
             string user = "juanferrer";
             string repo = "sound-mixer";
             string body = System.Web.HttpUtility.UrlEncode($"Version: {fvi.ProductVersion}\n\n## Steps to reproduce:\n1. Step 1\n2. Step 2\n3. Step 3\n\n## Actual behaviour\n\n\n## Expected behaviour:\n\n\n## Other details:");
-            ProcessStartInfo psi = new ProcessStartInfo
+            var psi = new ProcessStartInfo()
             {
                 FileName = $"https://github.com/{user}/{repo}/issues/new?body={body}",
                 UseShellExecute = true
@@ -1022,9 +1019,9 @@ namespace SoundMixer.ViewModels
         public void SoloMuteButton_Click(object sender, RoutedEventArgs e)
         {
             var soundStack = (View as Views.RootView).soundStack;
-            List<UserControls.SoundControl> soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
+            var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
-            bool foundOne = false;
+            var foundOne = false;
 
             // First go through all sound controls and check if any is solo
             foreach (var soundControl in soundControls)
@@ -1041,7 +1038,7 @@ namespace SoundMixer.ViewModels
                 // There is at least one solo
                 foreach (var soundControl in soundControls)
                 {
-                    bool shouldPlay = soundControl.SoundPropertyModel.IsSolo && !soundControl.SoundPropertyModel.IsMuted;
+                    var shouldPlay = soundControl.SoundPropertyModel.IsSolo && !soundControl.SoundPropertyModel.IsMuted;
                     soundControl.SetPlayerMute(!shouldPlay); // Opposite because the function sets the IsMuted value
                 }
 
@@ -1066,7 +1063,7 @@ namespace SoundMixer.ViewModels
         public void Handle(AddedSoundFromStream e)
         {
             // Get sound path
-            string path = e.Args.SoundPath;
+            var path = e.Args.SoundPath;
             AddSound(path, null, true);
 
             Status = Enums.ProgramStatus.Ready;
@@ -1104,9 +1101,9 @@ namespace SoundMixer.ViewModels
 
         public void Dropped(IDropInfo dropInfo)
         {
-            if ((dropInfo.Data is SceneModel && !(dropInfo.TargetItem is SceneModel)) ||
-                (dropInfo.Data is MoodModel && !(dropInfo.TargetItem is MoodModel)) ||
-                (dropInfo.Data is SoundPropertyModel && !(dropInfo.TargetItem is SoundPropertyModel)))
+            if ((dropInfo.Data is SceneModel && dropInfo.TargetItem is not SceneModel) ||
+                (dropInfo.Data is MoodModel && (dropInfo.TargetItem is not MoodModel)) ||
+                (dropInfo.Data is SoundPropertyModel && (dropInfo.TargetItem is not SoundPropertyModel)))
             {
             }
         }
@@ -1128,9 +1125,9 @@ namespace SoundMixer.ViewModels
 
         public void DragOver(IDropInfo dropInfo)
         {
-            if ((dropInfo.Data is SceneModel && !(dropInfo.TargetItem is SceneModel)) ||
-                (dropInfo.Data is MoodModel && !(dropInfo.TargetItem is MoodModel)) ||
-                (dropInfo.Data is SoundPropertyModel && !(dropInfo.TargetItem is SoundPropertyModel)))
+            if ((dropInfo.Data is SceneModel && (dropInfo.TargetItem is not SceneModel)) ||
+                (dropInfo.Data is MoodModel && (dropInfo.TargetItem is not MoodModel)) ||
+                (dropInfo.Data is SoundPropertyModel && (dropInfo.TargetItem is not SoundPropertyModel)))
             {
                 dropInfo.Effects = DragDropEffects.None;
             }
