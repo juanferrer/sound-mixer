@@ -53,12 +53,12 @@ namespace SoundMixer.Models
             private set { this.SetAndNotify(ref this.duration, value); }
         }
 
-        public SoundModel(string name, string filePath, long duration, bool isURL = false)
+        public SoundModel(string name, string filePath, long duration, Guid guid, bool isURL = false)
         {
             Name = name;
             FilePath = filePath;
             IsURL = isURL;
-            GUID = Guid.NewGuid();
+            GUID = guid == Guid.Empty ? Guid.NewGuid() : guid;
             Duration = duration;
         }
     }

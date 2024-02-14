@@ -14,6 +14,7 @@ using SoundMixer.Miscellanea;
 using SoundMixer.Extensions;
 
 using Newtonsoft.Json;
+
 using Stylet;
 using Unosquare.FFME.Common;
 using GongSolutions.Wpf.DragDrop;
@@ -287,9 +288,9 @@ namespace SoundMixer.ViewModels
             }
 
             // TODO: Move this to another thread
-            long soundDuration = GetMediaDuration(soundPath, isURL);
+            var soundDuration = GetMediaDuration(soundPath, isURL);
 
-            SoundModel newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath, soundDuration, isURL);
+            var newSound = new SoundModel(GetUniqueNameFromString(tempName, SelectedScene.Sounds.Select(o => o.Name).ToList()), soundPath, soundDuration, soundPropertyModel?.GUID ?? Guid.Empty, isURL);
             SelectedScene.Sounds.Add(newSound);
 
             // Then add to every mood
@@ -395,10 +396,7 @@ namespace SoundMixer.ViewModels
 
                     // It is possible that the UI has not updated yet when we go to
                     // call PlayAllSounds, so force an update
-                    if (View != null)
-                    {
-                        View.UpdateLayout();
-                    }
+                    View?.UpdateLayout();
 
                     var sceneStack = (View as Views.RootView).sceneStack;
                     var sceneButtons = sceneStack.GetChildrenOfType<Button>();
@@ -432,10 +430,7 @@ namespace SoundMixer.ViewModels
 
             // It is possible that the UI has not updated yet when we go to
             // call PlayAllSounds, so force an update
-            if (View != null)
-            {
-                View.UpdateLayout();
-            }
+            View?.UpdateLayout();
 
             var sceneStack = (View as Views.RootView).sceneStack;
             var sceneButtons = sceneStack.GetChildrenOfType<Button>();
@@ -461,7 +456,7 @@ namespace SoundMixer.ViewModels
         {
             StopAllSounds();
 
-            for (int i = 0; i < SelectedScene.Moods.Count; ++i)
+            for (var i = 0; i < SelectedScene.Moods.Count; ++i)
             {
                 if (SelectedScene.Moods[i].Name == name)
                 {
@@ -469,10 +464,7 @@ namespace SoundMixer.ViewModels
 
                     // It is possible that the UI has not updated yet when we go to
                     // call PlayAllSounds, so force an update
-                    if (View != null)
-                    {
-                        View.UpdateLayout();
-                    }
+                    View?.UpdateLayout();
 
                     var moodStack = (View as Views.RootView).moodStack;
                     var moodButtons = moodStack.GetChildrenOfType<Button>();
@@ -505,10 +497,7 @@ namespace SoundMixer.ViewModels
 
             // It is possible that the UI has not updated yet when we go to
             // call PlayAllSounds, so force an update
-            if (View != null)
-            {
-                View.UpdateLayout();
-            }
+            View?.UpdateLayout();
 
             var moodStack = (View as Views.RootView).moodStack;
             var moodButtons = moodStack.GetChildrenOfType<Button>();
@@ -549,7 +538,7 @@ namespace SoundMixer.ViewModels
             {
                 if (scene.Moods.Count > 0)
                 {
-                    for (int i = 0; i < scene.Moods[0]?.SoundProperties.Count; ++i)
+                    for (var i = 0; i < scene.Moods[0]?.SoundProperties.Count; ++i)
                     {
                         SoundModel sound = FindSoundFromGuid(scene.Moods[0].SoundProperties[i].GUID);
 

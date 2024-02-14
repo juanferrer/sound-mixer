@@ -144,7 +144,7 @@ namespace SoundMixer.UserControls
             // Cancel thread that keeps sound playing
             if (SoundPropertyModel.IsDelayed)
             {
-                delayedPlayCancellationTokenSource.Cancel();
+                delayedPlayCancellationTokenSource?.Cancel();
                 Log.Information("Cancelling delayed play of {0}.", SoundPropertyModel.Name);
             }
 
