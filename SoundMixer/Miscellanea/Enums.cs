@@ -11,5 +11,12 @@ namespace SoundMixer.Miscellanea
             Loading,
             Ready
         }
+
+        public enum Setting
+        {
+            WorkspaceDirectory,
+            SoundDirectory,
+            OutputDeviceId
+        }
     }
 }

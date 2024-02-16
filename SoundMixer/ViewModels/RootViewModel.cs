@@ -70,17 +70,9 @@ namespace SoundMixer.ViewModels
             get { return this.selectedOutputDevice; }
             set { this.SetAndNotify(ref this.selectedOutputDevice, value); }
         }
-        /*private LegacyAudioDeviceInfo selectedOutputDevice;
-        public LegacyAudioDeviceInfo SelectedOutputDevice
-        {
-            get { return this.selectedOutputDevice; }
-            set { this.SetAndNotify(ref this.selectedOutputDevice, value); }
-        }*/
 
         private BindableCollection<DirectSoundDeviceInfo> outputDevices;
         public BindableCollection<DirectSoundDeviceInfo> OutputDevices
-        //private BindableCollection<LegacyAudioDeviceInfo> outputDevices;
-        //public BindableCollection<LegacyAudioDeviceInfo> OutputDevices
         {
             get { return this.outputDevices; }
             set { this.SetAndNotify(ref this.outputDevices, value); }
@@ -150,9 +142,9 @@ namespace SoundMixer.ViewModels
             Status = Enums.ProgramStatus.Ready;
 
             outputDevices = new BindableCollection<DirectSoundDeviceInfo>(Unosquare.FFME.Library.EnumerateDirectSoundDevices());
-            //outputDevices = new BindableCollection<LegacyAudioDeviceInfo>(Unosquare.FFME.Library.EnumerateLegacyAudioDevices());
+            var lastOutputDeviceId = Settings.GetSetting(Enums.Setting.OutputDeviceId);
 
-            SelectedOutputDevice = outputDevices.ElementAt(0);
+            SelectedOutputDevice = string.IsNullOrWhiteSpace(lastOutputDeviceId) || !outputDevices.Any(d => d.DeviceId.ToString() == lastOutputDeviceId) ? outputDevices.ElementAt(0) : outputDevices.Single(d => d.DeviceId.ToString() == lastOutputDeviceId);
         }
 
         /// <summary>
@@ -398,7 +390,7 @@ namespace SoundMixer.ViewModels
                     // call PlayAllSounds, so force an update
                     View?.UpdateLayout();
 
-                    var sceneStack = (View as Views.RootView).sceneStack;
+                    var sceneStack = (View as Views.RootView).SceneStack;
                     var sceneButtons = sceneStack.GetChildrenOfType<Button>();
 
                     // Apply the default style to every scene button and the selected style to the newly selected one
@@ -432,7 +424,7 @@ namespace SoundMixer.ViewModels
             // call PlayAllSounds, so force an update
             View?.UpdateLayout();
 
-            var sceneStack = (View as Views.RootView).sceneStack;
+            var sceneStack = (View as Views.RootView).SceneStack;
             var sceneButtons = sceneStack.GetChildrenOfType<Button>();
 
             // Apply the default style to every scene button and the selected style to the newly selected one
@@ -466,7 +458,7 @@ namespace SoundMixer.ViewModels
                     // call PlayAllSounds, so force an update
                     View?.UpdateLayout();
 
-                    var moodStack = (View as Views.RootView).moodStack;
+                    var moodStack = (View as Views.RootView).MoodStack;
                     var moodButtons = moodStack.GetChildrenOfType<Button>();
 
                     // Apply the default style to every scene button and the selected style to the newly selected one
@@ -499,7 +491,7 @@ namespace SoundMixer.ViewModels
             // call PlayAllSounds, so force an update
             View?.UpdateLayout();
 
-            var moodStack = (View as Views.RootView).moodStack;
+            var moodStack = (View as Views.RootView).MoodStack;
             var moodButtons = moodStack.GetChildrenOfType<Button>();
 
             // Apply the default style to every scene button and the selected style to the newly selected one
@@ -588,7 +580,7 @@ namespace SoundMixer.ViewModels
             if (View != null)
             {
                 var foundOne = false;
-                var soundStack = (View as Views.RootView).soundStack;
+                var soundStack = (View as Views.RootView).SoundStack;
                 var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
                 foreach (var soundControl in soundControls)
@@ -610,7 +602,7 @@ namespace SoundMixer.ViewModels
         {
             if (View != null)
             {
-                var soundStack = (View as Views.RootView).soundStack;
+                var soundStack = (View as Views.RootView).SoundStack;
                 var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
                 foreach (var soundControl in soundControls)
@@ -682,7 +674,8 @@ namespace SoundMixer.ViewModels
 
             var openFileDialog = new OpenFileDialog()
             {
-                Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
+                Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*",
+                InitialDirectory = Settings.GetSetting(Enums.Setting.WorkspaceDirectory)
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -690,6 +683,7 @@ namespace SoundMixer.ViewModels
                 if (File.Exists(path))
                 {
                     activeFilePath = path;
+                    Settings.SetSetting(Enums.Setting.WorkspaceDirectory, Directory.GetParent(activeFilePath).FullName);
                     LoadWorkspace(activeFilePath);
                 }
             }
@@ -702,11 +696,13 @@ namespace SoundMixer.ViewModels
             {
                 var saveFileDialog = new SaveFileDialog()
                 {
-                    Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
+                    Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*",
+                    InitialDirectory = Settings.GetSetting(Enums.Setting.WorkspaceDirectory)
                 };
                 if ((bool)saveFileDialog.ShowDialog())
                 {
                     activeFilePath = saveFileDialog.FileName;
+                    Settings.SetSetting(Enums.Setting.WorkspaceDirectory, Directory.GetParent(activeFilePath).FullName);
                 }
                 else
                 {
@@ -722,11 +718,13 @@ namespace SoundMixer.ViewModels
         {
             var saveFileDialog = new SaveFileDialog()
             {
-                Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*"
+                Filter = "Workspace files (*.wsp)|*.wsp|All files (*.*)|*.*",
+                InitialDirectory = Settings.GetSetting(Enums.Setting.WorkspaceDirectory)
             };
             if ((bool)saveFileDialog.ShowDialog())
             {
                 activeFilePath = saveFileDialog.FileName;
+                Settings.SetSetting(Enums.Setting.WorkspaceDirectory, Directory.GetParent(activeFilePath).FullName);
                 SaveWorkspace(activeFilePath);
                 isDirty = false;
             }
@@ -763,11 +761,15 @@ namespace SoundMixer.ViewModels
             if (SelectedMood != null)
             {
                 // First open a file dialog to select the sound
-                var openFileDialog = new OpenFileDialog();
+                var openFileDialog = new OpenFileDialog
+                {
+                    InitialDirectory = Settings.GetSetting(Enums.Setting.SoundDirectory)
+                };
 
                 if (openFileDialog.ShowDialog() == true)
                 {
                     var filePath = openFileDialog.FileName;
+                    Settings.SetSetting(Enums.Setting.SoundDirectory, Directory.GetParent(filePath).FullName);
                     AddSound(filePath);
                 }
             }
@@ -798,6 +800,8 @@ namespace SoundMixer.ViewModels
             };
             this.windowManager.ShowDialog(new SettingsViewModel(settingsModel));
             SelectedOutputDevice = settingsModel.SelectedOutputDevice;
+            Settings.SetSetting(Enums.Setting.OutputDeviceId, SelectedOutputDevice.DeviceId.ToString());
+
 
             // Also need to update all sounds to use the new SelectedOutputDevice
             UpdateOutputDeviceInSounds();
@@ -805,7 +809,7 @@ namespace SoundMixer.ViewModels
 
         public void UpdateOutputDeviceInSounds()
         {
-            var soundStack = (View as Views.RootView).soundStack;
+            var soundStack = (View as Views.RootView).SoundStack;
             var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
             // First go through all sound controls and check if any is solo
@@ -1007,7 +1011,7 @@ namespace SoundMixer.ViewModels
 
         public void SoloMuteButton_Click(object sender, RoutedEventArgs e)
         {
-            var soundStack = (View as Views.RootView).soundStack;
+            var soundStack = (View as Views.RootView).SoundStack;
             var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
             var foundOne = false;
