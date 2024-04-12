@@ -12,7 +12,7 @@
             <ColumnDefinition Width="80"/>
         </Grid.ColumnDefinitions>
         <TextBox Text="{Binding FilePath, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" LostFocus="TextBox_LostFocus" Grid.Column="0" VerticalAlignment="Center"/>
-        <Button Content="{Binding Text, RelativeSource={RelativeSource AncestorType=UserControl}}" Click="BrowseButton_Click" Grid.Column="2" VerticalAlignment="Center"/>
+        <Button Content="{Binding Text, FallbackValue=Browse...}" Click="BrowseButton_Click" Grid.Column="2" VerticalAlignment="Center"/>
 
     </Grid>
 </UserControl>

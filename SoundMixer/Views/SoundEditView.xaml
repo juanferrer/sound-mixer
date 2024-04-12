@@ -16,8 +16,10 @@
         <TextBox Text="{Binding SoundPropertyModel.Sound.Name, Mode=TwoWay}" Grid.Row="0" FontSize="25" TextAlignment="Center"/>
         <StackPanel Grid.Row="1" Margin="5">
             <Label Content="Current file:"/>
-            <custom:BrowseControl Text="Browse..." FilePath="{Binding SoundPropertyModel.Sound.FilePath, Mode=TwoWay}" Margin="5,0"
-                                  DialogType="Open" DialogFilter="Sound files (*.mp3;*.wav)|*.mp3;*.wav|All files (*.*)|*.*"/>
+            <!--<custom:BrowseControl Text="Browse..." FilePath="{Binding SoundPropertyModel.Sound.FilePath, Mode=TwoWay}" Margin="5,0"
+                                  DialogType="Open" DialogFilter="Sound files (*.mp3;*.wav)|*.mp3;*.wav|All files (*.*)|*.*"/>-->
+            <custom:SoundListControl FilePath="{Binding SoundPropertyModel.Sound.FilePath, Mode=OneWay}" FilePaths="{Binding SoundPropertyModel.Sound.FilePaths, Mode=OneWay}" Margin="5,0"
+                                     DialogType="Open" DialogFilter="Sound files (*.mp3;*.wav;*.ogg)|*.mp3;*.wav;*.ogg|All files (*.*)|*.*"/>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Length:"/>
                 <TextBlock Text="{Binding SoundPropertyModel.Sound.Duration, Converter={StaticResource DurationFormatConverter}}" VerticalAlignment="Center"/>

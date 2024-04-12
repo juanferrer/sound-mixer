@@ -93,6 +93,12 @@ namespace SoundMixer.UserControls
                 Log.Information("Querying play of {0}.", SoundPropertyModel.Name);
                 return;
             }
+
+            if (SoundPropertyModel.Sound.FilePaths.Count > 0)
+            {
+                await player.Open(new Uri(SoundPropertyModel.Sound.FilePath));
+            }
+
             UpdatePlayer();
             //player.Position = TimeSpan.Zero;
             await player.Seek(TimeSpan.Zero);

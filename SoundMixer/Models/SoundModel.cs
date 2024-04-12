@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Stylet;
 
@@ -10,6 +10,9 @@ namespace SoundMixer.Models
     {
         [JsonProperty]
         private string filePath;
+
+        [JsonProperty]
+        private BindableCollection<string> filePaths;
 
         [JsonProperty]
         private string name;
@@ -23,10 +26,34 @@ namespace SoundMixer.Models
         [JsonProperty]
         private long duration;
 
+        [JsonProperty]
+        private bool isList;
+
+        private int soundIndex = 0;
+
+        public int SoundIndex
+        {
+            get
+            {
+                if (soundIndex >= filePaths.Count)
+                {
+                    soundIndex = 0;
+                }
+
+                return soundIndex++; // Return index and then increment it, so we need to check before using
+            }
+            private set { this.SetAndNotify(ref this.soundIndex, value); }
+        }
+
         public string FilePath
         {
-            get { return this.filePath; }
-            set { this.SetAndNotify(ref this.filePath, value); }
+            get { return this.filePaths[SoundIndex]; }
+        }
+
+        public BindableCollection<string> FilePaths
+        {
+            get { return this.filePaths; }
+            private set { this.SetAndNotify(ref this.filePaths, value); }
         }
 
         public string Name
@@ -53,13 +80,20 @@ namespace SoundMixer.Models
             private set { this.SetAndNotify(ref this.duration, value); }
         }
 
+        public bool IsList
+        {
+            get { return this.isList; }
+            set { this.SetAndNotify(ref this.isList, value); }
+        }
+
         public SoundModel(string name, string filePath, long duration, Guid guid, bool isURL = false)
         {
             Name = name;
-            FilePath = filePath;
+            FilePaths = new BindableCollection<string> { filePath };
             IsURL = isURL;
             GUID = guid == Guid.Empty ? Guid.NewGuid() : guid;
             Duration = duration;
+
         }
     }
 }

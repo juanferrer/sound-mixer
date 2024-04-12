@@ -353,6 +353,8 @@ namespace SoundMixer.ViewModels
         /// <param name="soundGuid"></param>
         public void RemoveSound(Guid soundGuid)
         {
+            Log.Information("Removing sound {0} from scene {1}.", FindSoundFromGuid(soundGuid).Name, SelectedScene.Name);
+
             var length = SelectedScene.Sounds.Count;
             var soundIndex = -1;
             for (var i = length - 1; i >= 0; --i)
@@ -372,8 +374,6 @@ namespace SoundMixer.ViewModels
             }
 
             isDirty = true;
-
-            Log.Information("Removing sound {0} from scene {1}.", FindSoundFromGuid(soundGuid).Name, SelectedScene.Name);
         }
 
         public void SelectScene(string name)
@@ -813,10 +813,10 @@ namespace SoundMixer.ViewModels
             var soundControls = soundStack.GetChildrenOfType<UserControls.SoundControl>();
 
             // First go through all sound controls and check if any is solo
-            /*foreach (var soundControl in soundControls)
+            foreach (var soundControl in soundControls)
             {
-                //soundControl.SetOutputDevice(SelectedOutputDevice);
-            }*/
+                soundControl.SetOutputDevice(SelectedOutputDevice);
+            }
         }
 
         /// <summary>
