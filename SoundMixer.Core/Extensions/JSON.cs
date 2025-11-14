@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SoundMixer.Core.Extensions.JSON
+namespace SoundMixer.Core.Extensions
 {
     public static class JSON
     {

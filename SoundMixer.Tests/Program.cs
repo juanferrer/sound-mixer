@@ -1,15 +1,26 @@
 ﻿using SoundMixer.Core;
 using SoundMixer.Core.Objects;
-using SoundMixer.Core.Extensions.JSON;
+using SoundMixer.Core.Extensions;
 
 using SoundMixer.Core.NAudioPlayer;
+
+using Serilog;
+using Serilog.Core;
+using Serilog.Extensions.Logging;
 
 public class Program
 {
     public static void Main()
     {
-        var file = System.IO.File.ReadAllText("C:\\Users\\juanf\\Downloads\\workspace.json");
-        var workspace = file.Deserialize<Workspace>();
+        var logger = new SerilogLoggerFactory(new LoggerConfiguration()
+            .WriteTo.Console()
+            //.WriteTo.File("log.txt", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true)
+            .CreateLogger()).CreateLogger("Logger");
+
+        var workspacePath = "C:\\Users\\juanf\\Downloads\\workspace.json";
+
+        var workspaceJson = File.ReadAllText(workspacePath);
+        var workspace = workspaceJson.Deserialize<Workspace>();
 
         if (workspace == null)
         {
@@ -23,14 +34,15 @@ public class Program
 
         workspace.LoadMood(workspace.Scenes[0].Moods[0].Guid);
         workspace.Play();
+        var soundGuid = workspace.Scenes[0].Moods[0].SoundProperties[0].Guid;
         Thread.Sleep(1000);
-        workspace.SetMuted(workspace.Scenes[0].Moods[0].SoundProperties[0].Guid, true);
+        workspace.SetMuted(soundGuid, true);
         Thread.Sleep(1000);
-        workspace.SetMuted(workspace.Scenes[0].Moods[0].SoundProperties[0].Guid, false);
+        workspace.SetMuted(soundGuid, false);
         Thread.Sleep(1000);
-        workspace.SetMuted(workspace.Scenes[0].Moods[0].SoundProperties[0].Guid, true);
+        workspace.SetMuted(soundGuid, true);
         Thread.Sleep(1000);
-        workspace.SetMuted(workspace.Scenes[0].Moods[0].SoundProperties[0].Guid, false);
+        workspace.SetMuted(soundGuid, false);
         Console.ReadKey();
     }
 }

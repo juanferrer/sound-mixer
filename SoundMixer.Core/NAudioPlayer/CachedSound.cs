@@ -46,7 +46,7 @@ namespace SoundMixer.Core.NAudioPlayer
                 return new MonoToStereoSampleProvider(input);
             }
 
-            throw new NotImplementedException("Stereo to Mono convertion not implemented");
+            throw new NotImplementedException("Stereo to Mono conversion not implemented");
         }
 
         private static ISampleProvider ConvertToRightSampleRate(IWaveProvider input, WaveFormat waveFormat)

@@ -33,9 +33,10 @@ namespace SoundMixer.Core.Objects
                         {
                             var sound = scene.Sounds.Where(o => o.Guid == scene.Moods[0].SoundProperties[i].SoundGuid).FirstOrDefault();
 
-                            if (sound != null)
+                            if (sound == null)
                             {
                                 // TODO: Can't find the sound
+                                continue;
                             }
 
                             mood.SoundProperties[i].Sound = sound;
